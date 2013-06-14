@@ -1,0 +1,122 @@
+
+# =======================================================
+# XDL NCD CONVERSION MODE $Revision: 1.01$
+# time: Mon Jun 03 10:54:58 2013
+
+# =======================================================
+
+
+# =======================================================
+# The syntax for the design statement is:                
+# design <design_name> <part> <ncd version>;             
+# or                                                     
+# design <design_name> <device> <package> <speed> <ncd_version>
+# =======================================================
+design "w.ncd" xc4vlx15ff668-10 v3.2 ;
+
+
+#  =======================================================
+#  The syntax for instances is:
+#      instance <name> <sitedef>, placed <tile> <site>, cfg <string> ;
+#  or
+#      instance <name> <sitedef>, unplaced, cfg <string> ;
+# 
+#  For typing convenience you can abbreviate instance to inst.
+# 
+#  For IOs there are two special keywords: bonded and unbonded
+#  that can be used to designate whether the PAD of an unplaced IO is
+#  bonded out. If neither keyword is specified, bonded is assumed.
+# 
+#  The bonding of placed IOs is determined by the site they are placed in.
+# 
+#  If you specify bonded or unbonded for an instance that is not an
+#  IOB it is ignored.
+# 
+#  Shown below are three examples for IOs. 
+#     instance IO1 IOB, unplaced ;          # This will be bonded
+#     instance IO1 IOB, unplaced bonded ;   # This will be bonded
+#     instance IO1 IOB, unplaced unbonded ; # This will be unbonded
+#  =======================================================
+inst "$COMP_0" "SLICEL",placed CLB_X16Y63 SLICE_X25Y127  ,
+  cfg " BXINV::#OFF BYINV::#OFF CEINV::#OFF CLKINV::#OFF COUTUSED::#OFF
+       CY0F::#OFF CY0G::#OFF CYINIT::#OFF DXMUX::#OFF DYMUX::#OFF F:$COMP_0.F:#LUT:D=1
+       F5USED::#OFF FFX::#OFF FFX_INIT_ATTR::#OFF FFX_SR_ATTR::#OFF FFY::#OFF
+       FFY_INIT_ATTR::#OFF FFY_SR_ATTR::#OFF FXMUX::#OFF FXUSED::#OFF G::#OFF
+       GYMUX::#OFF REVUSED::#OFF SRINV::#OFF SYNC_ATTR::#OFF XBUSED::#OFF
+       XMUXUSED::#OFF XUSED::0 YBUSED::#OFF YMUXUSED::#OFF YUSED::#OFF "
+  ;
+inst "$COMP_1" "SLICEL",placed CLB_X16Y0 SLICE_X25Y0  ,
+  cfg " BXINV::#OFF BYINV::#OFF CEINV::#OFF CLKINV::#OFF COUTUSED::#OFF
+       CY0F::#OFF CY0G::#OFF CYINIT::#OFF DXMUX::#OFF DYMUX::#OFF F:$COMP_1.F:#LUT:D=A3
+       F5USED::#OFF FFX::#OFF FFX_INIT_ATTR::#OFF FFX_SR_ATTR::#OFF FFY::#OFF
+       FFY_INIT_ATTR::#OFF FFY_SR_ATTR::#OFF FXMUX::#OFF FXUSED::#OFF G::#OFF
+       GYMUX::#OFF REVUSED::#OFF SRINV::#OFF SYNC_ATTR::#OFF XBUSED::#OFF
+       XMUXUSED::#OFF XUSED::#OFF YBUSED::#OFF YMUXUSED::#OFF YUSED::#OFF
+       "
+  ;
+
+#  ================================================
+#  The syntax for nets is:
+#     net <name> <type>,
+#       outpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       inpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       pip <tile> <wire0> <dir> <wire1> , # [<rt>]
+#       .
+#       .
+#       ;
+# 
+#  There are three available wire types: wire, power and ground.
+#  If no type is specified, wire is assumed.
+# 
+#  Wire indicates that this a normal wire.
+#  Power indicates that this net is tied to a DC power source.
+#  You can use "power", "vcc" or "vdd" to specify a power net.
+# 
+#  Ground indicates that this net is tied to ground.
+#  You can use "ground", or "gnd" to specify a ground net.
+# 
+#  The <dir> token will be one of the following:
+# 
+#     Symbol Description
+#     ====== ==========================================
+#       ==   Bidirectional, unbuffered.
+#       =>   Bidirectional, buffered in one direction.
+#       =-   Bidirectional, buffered in both directions.
+#       ->   Directional, buffered.
+# 
+#  No pips exist for unrouted nets.
+#  ================================================
+net "$NET_0" , 
+  outpin "$COMP_0" X ,
+  inpin "$COMP_1" F3 ,
+  pip CLB_X16Y0 IMUX_B13_INT -> F3_PINWIRE1 , 
+  pip CLB_X16Y63 X_PINWIRE3 -> BEST_LOGIC_OUTS3_INT , 
+  pip INT_X16Y0 BYP_BOUNCE7 -> IMUX_B13 , 
+  pip INT_X16Y0 BYP_INT_B7 -> BYP_BOUNCE7 , 
+  pip INT_X16Y0 S2END_S0 -> W2BEG8 , 
+  pip INT_X16Y0 W2BEG8 -> BYP_INT_B7 , 
+  pip INT_X16Y15 S6END0 -> S6BEG0 , 
+  pip INT_X16Y21 S6END0 -> S6BEG0 , 
+  pip INT_X16Y27 S6END0 -> S6BEG0 , 
+  pip INT_X16Y3 S6END0 -> S2BEG0 , 
+  pip INT_X16Y33 S6END0 -> S6BEG0 , 
+  pip INT_X16Y39 S6END0 -> S6BEG0 , 
+  pip INT_X16Y45 S6END0 -> S6BEG0 , 
+  pip INT_X16Y51 S6END0 -> S6BEG0 , 
+  pip INT_X16Y57 S6END0 -> S6BEG0 , 
+  pip INT_X16Y63 BEST_LOGIC_OUTS3 -> S6BEG0 , 
+  pip INT_X16Y9 S6END0 -> S6BEG0 , 
+  ;
+
+# =======================================================
+# SUMMARY
+# Number of Module Defs: 0
+# Number of Module Insts: 0
+# Number of Primitive Insts: 2
+# Number of Nets: 1
+# =======================================================
+

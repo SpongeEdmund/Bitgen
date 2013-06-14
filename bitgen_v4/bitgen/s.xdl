@@ -1,0 +1,134 @@
+
+# =======================================================
+# XDL NCD CONVERSION MODE $Revision: 1.01$
+# time: Mon Jun 03 10:55:22 2013
+
+# =======================================================
+
+
+# =======================================================
+# The syntax for the design statement is:                
+# design <design_name> <part> <ncd version>;             
+# or                                                     
+# design <design_name> <device> <package> <speed> <ncd_version>
+# =======================================================
+design "s.ncd" xc4vlx15ff668-10 v3.2 ;
+
+
+#  =======================================================
+#  The syntax for instances is:
+#      instance <name> <sitedef>, placed <tile> <site>, cfg <string> ;
+#  or
+#      instance <name> <sitedef>, unplaced, cfg <string> ;
+# 
+#  For typing convenience you can abbreviate instance to inst.
+# 
+#  For IOs there are two special keywords: bonded and unbonded
+#  that can be used to designate whether the PAD of an unplaced IO is
+#  bonded out. If neither keyword is specified, bonded is assumed.
+# 
+#  The bonding of placed IOs is determined by the site they are placed in.
+# 
+#  If you specify bonded or unbonded for an instance that is not an
+#  IOB it is ignored.
+# 
+#  Shown below are three examples for IOs. 
+#     instance IO1 IOB, unplaced ;          # This will be bonded
+#     instance IO1 IOB, unplaced bonded ;   # This will be bonded
+#     instance IO1 IOB, unplaced unbonded ; # This will be unbonded
+#  =======================================================
+inst "$COMP_0" "SLICEM",placed CLB_X1Y63 SLICE_X0Y127  ,
+  cfg " BXINV::#OFF BYINV::#OFF BYINVOUTUSED::#OFF BYOUTUSED::#OFF CEINV::#OFF
+       CLKINV::#OFF COUTUSED::#OFF CY0F::#OFF CY0G::#OFF CYINIT::#OFF DIF_MUX::#OFF
+       DIGUSED::#OFF DIG_MUX::#OFF DXMUX::#OFF DYMUX::#OFF F:$COMP_0.F:#LUT:D=1
+       F5USED::#OFF FFX::#OFF FFX_INIT_ATTR::#OFF FFX_SR_ATTR::#OFF FFY::#OFF
+       FFY_INIT_ATTR::#OFF FFY_SR_ATTR::#OFF FXMUX::#OFF FXUSED::#OFF F_ATTR::#OFF
+       G::#OFF GYMUX::#OFF G_ATTR::#OFF REVUSED::#OFF SHIFTOUTUSED::#OFF
+       SLICEWE0USED::#OFF SLICEWE1USED::#OFF SRFFMUX::#OFF SRINV::#OFF SYNC_ATTR::#OFF
+       WF1USED::#OFF WF2USED::#OFF WF3USED::#OFF WF4USED::#OFF WG1USED::#OFF
+       WG2USED::#OFF WG3USED::#OFF WG4USED::#OFF XBMUX::#OFF XBUSED::#OFF
+       XMUXUSED::#OFF XUSED::0 YBMUX::#OFF YBUSED::#OFF YMUXUSED::#OFF YUSED::#OFF
+       "
+  ;
+inst "$COMP_1" "SLICEM",placed CLB_X29Y0 SLICE_X46Y0  ,
+  cfg " BXINV::#OFF BYINV::#OFF BYINVOUTUSED::#OFF BYOUTUSED::#OFF CEINV::#OFF
+       CLKINV::#OFF COUTUSED::#OFF CY0F::#OFF CY0G::#OFF CYINIT::#OFF DIF_MUX::#OFF
+       DIGUSED::#OFF DIG_MUX::#OFF DXMUX::#OFF DYMUX::#OFF F::#OFF F5USED::#OFF
+       FFX::#OFF FFX_INIT_ATTR::#OFF FFX_SR_ATTR::#OFF FFY::#OFF FFY_INIT_ATTR::#OFF
+       FFY_SR_ATTR::#OFF FXMUX::#OFF FXUSED::#OFF F_ATTR::#OFF G:$COMP_1.G:#LUT:D=A2+A2
+       GYMUX::#OFF G_ATTR::#OFF REVUSED::#OFF SHIFTOUTUSED::#OFF SLICEWE0USED::#OFF
+       SLICEWE1USED::#OFF SRFFMUX::#OFF SRINV::#OFF SYNC_ATTR::#OFF WF1USED::#OFF
+       WF2USED::#OFF WF3USED::#OFF WF4USED::#OFF WG1USED::#OFF WG2USED::#OFF
+       WG3USED::#OFF WG4USED::#OFF XBMUX::#OFF XBUSED::#OFF XMUXUSED::#OFF
+       XUSED::#OFF YBMUX::#OFF YBUSED::#OFF YMUXUSED::#OFF YUSED::#OFF "
+  ;
+
+#  ================================================
+#  The syntax for nets is:
+#     net <name> <type>,
+#       outpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       inpin <inst_name> <inst_pin>,
+#       .
+#       .
+#       pip <tile> <wire0> <dir> <wire1> , # [<rt>]
+#       .
+#       .
+#       ;
+# 
+#  There are three available wire types: wire, power and ground.
+#  If no type is specified, wire is assumed.
+# 
+#  Wire indicates that this a normal wire.
+#  Power indicates that this net is tied to a DC power source.
+#  You can use "power", "vcc" or "vdd" to specify a power net.
+# 
+#  Ground indicates that this net is tied to ground.
+#  You can use "ground", or "gnd" to specify a ground net.
+# 
+#  The <dir> token will be one of the following:
+# 
+#     Symbol Description
+#     ====== ==========================================
+#       ==   Bidirectional, unbuffered.
+#       =>   Bidirectional, buffered in one direction.
+#       =-   Bidirectional, buffered in both directions.
+#       ->   Directional, buffered.
+# 
+#  No pips exist for unrouted nets.
+#  ================================================
+net "$NET_0" , 
+  outpin "$COMP_0" X ,
+  inpin "$COMP_1" G2 ,
+  pip CLB_X1Y63 X_PINWIRE2 -> BEST_LOGIC_OUTS2_INT , 
+  pip CLB_X29Y0 IMUX_B2_INT -> G2_PINWIRE0 , 
+  pip INT_X13Y15 S6END0 -> S6BEG0 , 
+  pip INT_X13Y2 S6END_S0 -> E2BEG9 , 
+  pip INT_X13Y21 S6END0 -> S6BEG0 , 
+  pip INT_X13Y27 S6END0 -> S6BEG0 , 
+  pip INT_X13Y33 S6END0 -> S6BEG0 , 
+  pip INT_X13Y39 S6END0 -> S6BEG0 , 
+  pip INT_X13Y45 S6END0 -> S6BEG0 , 
+  pip INT_X13Y51 S6END0 -> S6BEG0 , 
+  pip INT_X13Y57 S6END0 -> S6BEG0 , 
+  pip INT_X13Y63 E6END1 -> S6BEG0 , 
+  pip INT_X13Y9 S6END0 -> S6BEG0 , 
+  pip INT_X15Y0 S2END8 -> LH24 , 
+  pip INT_X15Y2 E2END9 -> S2BEG8 , 
+  pip INT_X1Y63 BEST_LOGIC_OUTS2 -> E6BEG3 , 
+  pip INT_X27Y0 LH12 -> E6BEG5 , 
+  pip INT_X28Y0 W6END5 -> E2BEG5 , 
+  pip INT_X29Y0 E2MID5 -> IMUX_B2 , 
+  pip INT_X7Y63 E6END3 -> E6BEG1 , 
+  pip R_TERM_INT_X30Y0 R_TERM_INT_E6MID5 -> R_TERM_INT_W6C5 , 
+  ;
+
+# =======================================================
+# SUMMARY
+# Number of Module Defs: 0
+# Number of Module Insts: 0
+# Number of Primitive Insts: 2
+# Number of Nets: 1
+# =======================================================
+

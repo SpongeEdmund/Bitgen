@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\io">
+      <UniqueIdentifier>{dabf1715-2128-484b-99c1-7c624e332a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\io">
+      <UniqueIdentifier>{90406bdf-accd-4890-b42a-2ceb2ba2003b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputSamples">
+      <UniqueIdentifier>{2f8a0595-84f4-4461-9345-b729339df0ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\netlist">
+      <UniqueIdentifier>{aaa7e1e8-8d14-409b-a4f5-6b7d2dda4281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\netlist">
+      <UniqueIdentifier>{78f48221-6bcb-40c7-a942-7064086e61cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cil">
+      <UniqueIdentifier>{1f66abae-b344-4f03-b68d-94391ac5243e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cil">
+      <UniqueIdentifier>{57129c9b-cbc7-4e6b-a476-0fc75ebf04e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\bitstream">
+      <UniqueIdentifier>{7f026227-0e33-4180-a1da-0c7b7edfa6a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\bitstream">
+      <UniqueIdentifier>{1c5445ae-61fe-47b4-913d-950466bdbe45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\query">
+      <UniqueIdentifier>{a5c28272-7f50-4d17-884c-5602a052226e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\query">
+      <UniqueIdentifier>{b757e750-1024-429c-9c31-e0e7c587927e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BitGenApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Args.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetlistDesign.h">
+      <Filter>Header Files\netlist</Filter>
+    </ClInclude>
+    <ClInclude Include="NetlistInst.h">
+      <Filter>Header Files\netlist</Filter>
+    </ClInclude>
+    <ClInclude Include="NetlistNet.h">
+      <Filter>Header Files\netlist</Filter>
+    </ClInclude>
+    <ClInclude Include="Netlist.h">
+      <Filter>Header Files\netlist</Filter>
+    </ClInclude>
+    <ClInclude Include="XdlNLHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ElementLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="BramLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="Cil.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="XmlModUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GrmLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="SiteLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="TileLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="ChipLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="ClusterLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigLib.h">
+      <Filter>Header Files\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="BitStream.h">
+      <Filter>Header Files\bitstream</Filter>
+    </ClInclude>
+    <ClInclude Include="SramBit.h">
+      <Filter>Header Files\query</Filter>
+    </ClInclude>
+    <ClInclude Include="CfgQuerier.h">
+      <Filter>Header Files\query</Filter>
+    </ClInclude>
+    <ClInclude Include="InstQuerier.h">
+      <Filter>Header Files\query</Filter>
+    </ClInclude>
+    <ClInclude Include="LutCalc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetQuerier.h">
+      <Filter>Header Files\query</Filter>
+    </ClInclude>
+    <ClInclude Include="Exceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CfgHierarchy.h">
+      <Filter>Header Files\query</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BitGenApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Args.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XdlNLHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetlistDesign.cpp">
+      <Filter>Source Files\netlist</Filter>
+    </ClCompile>
+    <ClCompile Include="Cil.cpp">
+      <Filter>Source Files\cil</Filter>
+    </ClCompile>
+    <ClCompile Include="BitStream.cpp">
+      <Filter>Source Files\bitstream</Filter>
+    </ClCompile>
+    <ClCompile Include="CfgQuerier.cpp">
+      <Filter>Source Files\query</Filter>
+    </ClCompile>
+    <ClCompile Include="InstQuerier.cpp">
+      <Filter>Source Files\query</Filter>
+    </ClCompile>
+    <ClCompile Include="LutCalc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fdp5params.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetQuerier.cpp">
+      <Filter>Source Files\query</Filter>
+    </ClCompile>
+    <ClCompile Include="Exceptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CfgHierarchy.cpp">
+      <Filter>Source Files\query</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="netlist_sample.xdl">
+      <Filter>InputSamples</Filter>
+    </None>
+    <None Include="cil_sample.xml">
+      <Filter>InputSamples</Filter>
+    </None>
+    <None Include="fdp5p15_cil_2013_0414_2151.xml">
+      <Filter>InputSamples</Filter>
+    </None>
+  </ItemGroup>
+</Project>
