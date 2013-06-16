@@ -1,10 +1,11 @@
 #include "NetQuerier.h"
 #include <boost/lexical_cast.hpp>
-
+#include <sstream>
+#include "Exceptions.h"
 namespace bitgen {
 
 	using boost::lexical_cast;
-
+	using std::stringstream;
 	void NetQuerier::runQuery( SramVec & sramVec )
 	{
 		specifyArch();
@@ -85,7 +86,19 @@ namespace bitgen {
 						// Find the distribution of the sram
 						_cfgHir._curDist = 
 							_cfgHir._curGrmInst->find_dist_by_inst_and_sram( elemInstName, sramName );
-						assert( _cfgHir._curDist );
+						// assert( _cfgHir._curDist );
+#ifdef _DEBUG
+						stringstream distMissInfo;
+						distMissInfo << "[!Error!] Cannot find distribution info for sram: " 
+							<< elemInstName << "(" << _cfgHir._curElementInst->get_ref() << ")" << "." << sramName 
+							<< " in tile: " << _cfgHir._curTile->get_name()
+							<< " in grm: " << _cfgHir._curGrm->get_name();
+						CONDITIONAL_THROW (
+							_cfgHir._curDist != 0,
+							CilInfoMissException, 
+							distMissInfo.str()
+							)
+#endif
 
 						
 
@@ -98,6 +111,9 @@ namespace bitgen {
 						int wl = lexical_cast<int>( _cfgHir._curDist->get_wl() );
 						newSram.localPos = Point( bl, wl );
 
+#ifdef _DEBUG
+						std::cout << newSram << std::endl;
+#endif
 						sramVec.push_back(newSram);
 						
 						_cfgHir._curSram = _cfgHir._curSram->next_sram();

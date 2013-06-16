@@ -16,7 +16,7 @@ struct SramBit
 
 inline std::ostream & operator << ( std::ostream & os, const SramBit & bit ) 
 {
-	os << "::SRAM::Tile position: " << bit.tilePos + bit.offset
+	os << "[SRAM]Tile position: " << bit.tilePos + bit.offset
 		<< "\tLocal position: B"  << bit.localPos.getX() << "W" << bit.localPos.getY()
 		<< "\tValue: " << bit.bitValue;
 	return os;
