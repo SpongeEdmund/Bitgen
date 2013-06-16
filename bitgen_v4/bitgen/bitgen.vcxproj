@@ -120,6 +120,7 @@
     <ClInclude Include="ConfigLib.h" />
     <ClInclude Include="ElementLib.h" />
     <ClInclude Include="Exceptions.h" />
+    <ClInclude Include="fdp5.h" />
     <ClInclude Include="GrmLib.h" />
     <ClInclude Include="InstQuerier.h" />
     <ClInclude Include="LutCalc.h" />
@@ -143,7 +144,6 @@
     <ClCompile Include="CfgQuerier.cpp" />
     <ClCompile Include="Cil.cpp" />
     <ClCompile Include="Exceptions.cpp" />
-    <ClCompile Include="fdp5params.cpp" />
     <ClCompile Include="InstQuerier.cpp" />
     <ClCompile Include="LutCalc.cpp" />
     <ClCompile Include="main.cpp" />

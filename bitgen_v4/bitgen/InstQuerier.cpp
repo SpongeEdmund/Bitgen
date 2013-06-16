@@ -9,17 +9,27 @@
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
+//#include "fdp5params.cpp"
+#include "fdp5.h"
+using std::set;
+using std::vector;
+using std::string;
+using std::istringstream;
+using boost::lexical_cast;
+using std::transform;
+using std::abs;
 
-#include "fdp5params.cpp"
+//using namespace FDP5;
+//extern const unsigned BRAM_LENGTH_PER_BLOCK;
+//extern const unsigned BRAM_PARITY_LENGTH;
+//extern set<string> CFG_CLUSTERS;
+//extern set<string> CFG_TILES;
 
 namespace bitgen {
-	
-	using std::vector;
-	using std::string;
-	using std::istringstream;
-	using boost::lexical_cast;
-	using std::transform;
-	using std::abs;
+
+
+
+
 	void InstQuerier::runQuery( SramVec & sramVec )
 	{
 		//std::cout << "specify arch" << std::endl;
@@ -49,10 +59,14 @@ namespace bitgen {
 				)
 #endif
 			
-			/*Point tilePos = lexical_cast<Point>( _cfgHir._curTileInst->get_pos() );*/
 
 			// find current tile type
 			string tileName = _cfgHir._curTileInst->get_ref();
+
+			// If the current tile is not listed in the confugrable tile list, just ignore it.
+			if ( !CFG_TILES.count(tileName) ) continue;
+
+
 			_cfgHir._curTile = _cil.root()->get_tile_lib()->find_tile_by_name( tileName );
 			//assert( _cfgHir._curTile != 0 );
 #ifdef _DEBUG
@@ -64,6 +78,9 @@ namespace bitgen {
 				tileTypeMissInfo.str()
 				)
 #endif
+			
+
+				
 			// Global name is like this: clusterName_XmYn (for site) or pad name
 			// Firstly we should judge the type of the global name
 			// We can tell by finding if there is a '_' in the name
@@ -100,9 +117,14 @@ namespace bitgen {
 					clusterInstMissInfo.str()
 					)
 #endif
+				
+				if ( !CFG_CLUSTERS.count(clusterName) ) continue;
+					
 				// Find current cluster type
 				_cfgHir._curCluster = _cil.root()->get_cluster_lib()->find_cluster_by_name( clusterName );
 				//assert( _cfgHir._curCluster != 0 );
+
+
 #ifdef _DEBUG
 				stringstream clusterTypeMissInfo;
 				clusterTypeMissInfo << "[!Error!] Cannot find cluster type: " << clusterName;
@@ -429,7 +451,7 @@ namespace bitgen {
 		vector<int> bramBin;
 		Hex2BitVec( bramBin, bramStr );
 		// std::reverse( bramBin.begin(), bramBin.end() );
-		assert( bramBin.size() == FDP5::BRAM_LENGTH_PER_BLOCK );
+		assert( bramBin.size() == BRAM_LENGTH_PER_BLOCK );
 
 		// Find the current ram cell
 		_cfgHir._curBram = _cil.root()->get_bram_lib()->find_bram_by_type(bramType);
@@ -440,9 +462,9 @@ namespace bitgen {
 				cellAddr = i;
 			}
 			else if ( "INITP" == bramType ) {
-				cellAddr = i % FDP5::BRAM_PARITY_LENGTH;
+				cellAddr = i % BRAM_PARITY_LENGTH;
 				// Change bram address of INITP
-				bramAddr = (bramAddr*FDP5::BRAM_LENGTH_PER_BLOCK + i)/FDP5::BRAM_PARITY_LENGTH;
+				bramAddr = (bramAddr*BRAM_LENGTH_PER_BLOCK + i)/BRAM_PARITY_LENGTH;
 
 			} else {
 				// Throw unexpected bram type error

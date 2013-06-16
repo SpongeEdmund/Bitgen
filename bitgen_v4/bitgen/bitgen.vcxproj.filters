@@ -122,6 +122,9 @@
     <ClInclude Include="CfgHierarchy.h">
       <Filter>Header Files\query</Filter>
     </ClInclude>
+    <ClInclude Include="fdp5.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -155,9 +158,6 @@
       <Filter>Source Files\query</Filter>
     </ClCompile>
     <ClCompile Include="LutCalc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fdp5params.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NetQuerier.cpp">
