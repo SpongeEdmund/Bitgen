@@ -27,7 +27,7 @@ namespace bitgen {
 
 	void BitStream::init( bool initValue )
 	{
-#ifdef _DEBUG
+#ifdef _TEST
 		std::cout << "<DebugInfo> Initial a bitstream. " << std::flush;
 		// read in the total words amount from cil
 #endif
@@ -47,7 +47,7 @@ namespace bitgen {
 		int totalFrames = lexical_cast<int>( f * w * s );
 		int wordsPerFrame = lexical_cast<int>( _curPlan->get_words_per_frame() );
 		WORD initWord = initValue ? ALL_ONE : ALL_ZERO;
-#ifdef _DEBUG
+#ifdef _TEST
 		std::cout << "The word amount is " << totalFrames * wordsPerFrame << std::endl;
 
 #endif

@@ -7,6 +7,7 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
+		Test|Win32 = Test|Win32
 		TestCil|Win32 = TestCil|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -14,6 +15,8 @@ Global
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Debug|Win32.Build.0 = Debug|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Release|Win32.ActiveCfg = Release|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Release|Win32.Build.0 = Release|Win32
+		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Test|Win32.ActiveCfg = Test|Win32
+		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Test|Win32.Build.0 = Test|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.TestCil|Win32.ActiveCfg = Debug|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.TestCil|Win32.Build.0 = Debug|Win32
 	EndGlobalSection

@@ -54,14 +54,14 @@ namespace bitgen {
 
 		loadCil( ARGS.CIL );
 		
-//#ifdef _DEBUG
+//#ifdef _TEST
 		double _loadCilTime = static_cast<double>( clock() );
 		std::cout << "  >> Time elapsed " << (_loadCilTime-_startTime) * 1e-3 << "s." << std::endl;
 //#endif
 
 
 		loadNetlist( ARGS.NETLIST );
-//#ifdef _DEBUG
+//#ifdef _TEST
 		double _loadNlTime = static_cast<double>( clock() );
 		std::cout << "  >> Time elasped " << (_loadNlTime-_loadCilTime) * 1e-3 << "s." << std::endl;
 //#endif
@@ -69,7 +69,7 @@ namespace bitgen {
 		genBitStream();
 		
 		// outputBitstream( std::cout );
-		//#ifdef _DEBUG
+		//#ifdef _TEST
 		double _genBsTime = static_cast<double>( clock() );
 		std::cout << "  >> Time elasped " << (_genBsTime - _loadNlTime) * 1e-3 << "s." << std::endl;
 		//#endif
@@ -77,7 +77,7 @@ namespace bitgen {
 
 		std::cout << ">>| Output bitstream to " << ARGS.BITSTREAM << std::endl;
 		outputBitstream( bitstrFile );
-//#ifdef _DEBUG
+//#ifdef _TEST
 		double _outBsTime = static_cast<double>( clock() );
 		std::cout << "  >> Time elasped " << (_outBsTime-_genBsTime) * 1e-3 << "s." << std::endl;
 //#endif

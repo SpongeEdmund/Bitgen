@@ -38,7 +38,7 @@ namespace bitgen {
 		// main query process of inst
 		foreach( const NetlistInst & inst, _netlist.insts ) {
 			
-#ifdef _DEBUG	
+#ifdef _TEST	
 			std::cout << "<DebugInfo> Querying configuration for instance: "
 				<< inst._instName << " which is placed in site: "
 				<< inst._placedSite << " tile: " << inst._placedTile
@@ -49,7 +49,7 @@ namespace bitgen {
 			// find current tile inst
 			_cfgHir._curTileInst = _cfgHir._curArch->find_tile_inst_by_name( tileInstName );
 			//assert( _cfgHir._curTileInst != 0 );
-#ifdef _DEBUG
+#ifdef _TEST
 			stringstream tileInstMissInfo;
 			tileInstMissInfo << "[!Error!] Cannot find tile instance: " << tileInstName;
 			CONDITIONAL_THROW (
@@ -64,12 +64,14 @@ namespace bitgen {
 			string tileName = _cfgHir._curTileInst->get_ref();
 
 			// If the current tile is not listed in the confugrable tile list, just ignore it.
-			if ( !CFG_TILES.count(tileName) ) continue;
-
+			if ( !CFG_TILES.count(tileName) ) {
+				std::cout << "  <Warning>  There is no configuration for tile: " << tileName << std::endl;
+				continue;
+			}
 
 			_cfgHir._curTile = _cil.root()->get_tile_lib()->find_tile_by_name( tileName );
 			//assert( _cfgHir._curTile != 0 );
-#ifdef _DEBUG
+#ifdef _TEST
 			stringstream tileTypeMissInfo;
 			tileTypeMissInfo << "[!Error!] Cannot find tile type: " << tileName;
 			CONDITIONAL_THROW (
@@ -103,12 +105,18 @@ namespace bitgen {
 
 
 				string clusterName = siteInstGlobalName.substr( 0, sit );
+#ifdef _TEST
+				if ( !CFG_CLUSTERS.count(clusterName) ) {
+					std::cout << "  <Warning>  There is no configuration for cluster: " << clusterName << std::endl;
+					continue;
+				}
+#endif
 				string xyCoordination = siteInstGlobalName.substr( sit + 1 );
 				// Find current cluster inst
 				_cfgHir._curClusterInst = _cfgHir._curTile->find_cluster_inst_by_name( clusterName );
 				
 				//assert( _cfgHir._curClusterInst != 0 );
-#ifdef _DEBUG
+#ifdef _TEST
 				stringstream clusterInstMissInfo;
 				clusterInstMissInfo << "[!Error!] Cannot find cluster instance: " << clusterName;
 				CONDITIONAL_THROW (
@@ -118,14 +126,13 @@ namespace bitgen {
 					)
 #endif
 				
-				if ( !CFG_CLUSTERS.count(clusterName) ) continue;
-					
+
 				// Find current cluster type
 				_cfgHir._curCluster = _cil.root()->get_cluster_lib()->find_cluster_by_name( clusterName );
 				//assert( _cfgHir._curCluster != 0 );
 
 
-#ifdef _DEBUG
+#ifdef _TEST
 				stringstream clusterTypeMissInfo;
 				clusterTypeMissInfo << "[!Error!] Cannot find cluster type: " << clusterName;
 				CONDITIONAL_THROW (
@@ -149,7 +156,7 @@ namespace bitgen {
 
 				// Find the iob inst pos from the package
 				pad* p = _cfgHir._curPackage->find_pad_by_name( siteInstGlobalName );
-#ifdef _DEBUG
+#ifdef _TEST
 				stringstream padMissInfo;
 				padMissInfo << "[!Error!] Cannot find pad: " << siteInstGlobalName;
 				CONDITIONAL_THROW (
@@ -170,7 +177,7 @@ namespace bitgen {
 			_cfgHir._curSiteInst = 
 				_cfgHir._curCluster->find_site_inst_by_pos( lexical_cast<string>(siteInstPos) );
 			//assert( _cfgHir._curSiteInst != 0 );
-#ifdef _DEBUG
+#ifdef _TEST
 			stringstream siteInstMissInfo;
 			siteInstMissInfo << "[!Error!] Cannot find site instance whose pos is " << siteInstPos 
 				<< " in cluster " << _cfgHir._curCluster->get_name() ;
@@ -184,7 +191,7 @@ namespace bitgen {
 			string siteName = _cfgHir._curSiteInst->get_ref();
 			_cfgHir._curSite = _cil.root()->get_site_lib()->find_site_by_name(siteName);
 			//assert( _cfgHir._curSite != 0 );
-#ifdef _DEBUG
+#ifdef _TEST
 			stringstream siteTypeMissInfo;
 			siteTypeMissInfo << "[!Error!] Cannot find site type: " << siteName;
 			CONDITIONAL_THROW (
@@ -203,12 +210,12 @@ namespace bitgen {
 				string optionName = instCfg._option;
 				//Ignore option #OFF
 				if ( "#OFF" == optionName || "" == optionName ) continue;
-#ifdef _DEBUG
+#ifdef _TEST
 				std::cout << "<DebugInfo>  Querying for " << attrName << "::" << optionName << "..." << std::endl;
 #endif
 				_cfgHir._curAttr = _cfgHir._curSite->find_attribute_by_name(attrName);
 				//assert( _cfgHir._curAttr != 0 );
-#ifdef _DEBUG
+#ifdef _TEST
 				stringstream attrMissInfo;
 				attrMissInfo << "[!Error!] Cannot find attribute: " << attrName << " in site: "
 					<< _cfgHir._curSite->get_name();
@@ -251,7 +258,7 @@ namespace bitgen {
 	void InstQuerier::recordMapSrams( SramVec & sramVec, string option )
 	{
 		_cfgHir._curOption = _cfgHir._curAttr->find_option_by_name( option );
-#ifdef _DEBUG
+#ifdef _TEST
 		stringstream optionMissInfo;
 		optionMissInfo << "Cannot find option: " << option
 			<< " in attribute: " << _cfgHir._curAttr->get_name()
@@ -274,7 +281,7 @@ namespace bitgen {
 				_cfgHir._curDist =
 					_cfgHir._curClusterInst->find_dist_by_inst_and_sram( siteInstName, sramName );
 				//assert( _cfgHir._curDist );
-#ifdef _DEBUG
+#ifdef _TEST
 				stringstream distMissInfo;
 				distMissInfo << "[!Error!] Cannot find distribution info for sram: " 
 					<< siteInstName << "(" << _cfgHir._curSiteInst->get_ref() << ")" << "." << sramName 
@@ -301,7 +308,7 @@ namespace bitgen {
 				newSram.localPos = localPos;
 				newSram.bitValue = 
 					( _cfgHir._curDist->get_inv() == "yes" ) ? abs(bitValue - 1) : bitValue;
-#ifdef _DEBUG
+#ifdef _TEST
 				std::cout << newSram << std::endl;
 #endif
 				sramVec.push_back(newSram);
@@ -336,7 +343,7 @@ namespace bitgen {
 			_cfgHir._curDist = 
 				_cfgHir._curClusterInst->find_dist_by_inst_and_sram(siteInstName, sramName);
 			//assert(_cfgHir._curDist);
-#ifdef _DEBUG
+#ifdef _TEST
 			stringstream distMissInfo;
 			distMissInfo << "[!Error!] Cannot find distribution info for sram: " 
 				<< siteInstName << "(" << _cfgHir._curSiteInst->get_ref() << ")" << "." << sramName 
@@ -358,7 +365,7 @@ namespace bitgen {
 			newSram.localPos = Point(bl, wl);
 			newSram.bitValue = 
 				( _cfgHir._curDist->get_inv() == "yes" ) ? abs(bitValue - 1) : bitValue; 
-#ifdef _DEBUG
+#ifdef _TEST
 			std::cout << newSram << std::endl;
 #endif
 			sramVec.push_back(newSram);
@@ -403,7 +410,7 @@ namespace bitgen {
 			_cfgHir._curDist = 
 				_cfgHir._curClusterInst->find_dist_by_inst_and_sram(siteInstName, sramName);
 			//assert(_cfgHir._curDist);
-#ifdef _DEBUG
+#ifdef _TEST
 			stringstream distMissInfo;
 			distMissInfo << "[!Error!] Cannot find distribution info for sram: " 
 				<< siteInstName << "(" << _cfgHir._curSiteInst->get_ref() << ")" << "." << sramName 
@@ -425,7 +432,7 @@ namespace bitgen {
 			newSram.localPos = Point(bl, wl);
 			newSram.bitValue = 
 				( _cfgHir._curDist->get_inv() == "yes" ) ? abs(bitValue - 1) : bitValue; 
-#ifdef _DEBUG
+#ifdef _TEST
 			std::cout << newSram << std::endl;
 #endif
 			sramVec.push_back(newSram);
@@ -486,7 +493,7 @@ namespace bitgen {
 			newSram.localPos = Point( bl, wl );
 			newSram.offset = 
 				lexical_cast<Point>( _cfgHir._curBram->get_offset() );
-#ifdef _DEBUG
+#ifdef _TEST
 			std::cout << newSram << std::endl;
 #endif
 			sramVec.push_back(newSram);

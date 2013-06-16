@@ -12,7 +12,7 @@ namespace bitgen {
 
 		foreach ( const NetlistNet & net, _netlist.nets ) {
 			foreach ( const NetPip & pip, net.pips ) {
-#ifdef _DEBUG
+#ifdef _TEST
 				std::cout << "Querying for " << pip.tileName << " "
 					<< pip.srcNet << " -> " << pip.snkNet << std::endl;
 #endif
@@ -27,7 +27,7 @@ namespace bitgen {
 				_cfgHir._curTile = _cil.root()->get_tile_lib()->find_tile_by_name( tileTypeName );
 				//assert( _cfgHir._curTile != NULL );
 				if ( _cfgHir._curTile == NULL ) {
-#ifdef _DEBUG
+#ifdef _TEST
 					std::cout << "<Warning>: Tile: " << tileTypeName << " doesn't exist in cil."
 						<< std::endl;
 #endif
@@ -41,7 +41,7 @@ namespace bitgen {
 				// Before getting the GRM of the tile, firstly we should judge if the tile has
 				// interconnection need to be configured. We just ignore the buffer-like pips.
 				if ( _cfgHir._curGrmInst == NULL ) {
-#ifdef _DEBUG
+#ifdef _TEST
 					std::cout << "<Warning>: Tile: " << _cfgHir._curTile->get_name() << " has no configurable interconnection."
 						<< std::endl;
 #endif
@@ -56,7 +56,7 @@ namespace bitgen {
 				_cfgHir._curRoute = _cfgHir._curGrm->find_route_by_src_and_snk( pip.srcNet, pip.snkNet );
 				//assert( _cfgHir._curRoute );
 				if ( NULL == _cfgHir._curRoute ) {
-#ifdef _DEBUG
+#ifdef _TEST
 					std::cout << "<Warning>: PIP: " << pip.srcNet << " -> " << pip.snkNet
 						<< " has no sram control." << std::endl;
 #endif
@@ -87,7 +87,7 @@ namespace bitgen {
 						_cfgHir._curDist = 
 							_cfgHir._curGrmInst->find_dist_by_inst_and_sram( elemInstName, sramName );
 						// assert( _cfgHir._curDist );
-#ifdef _DEBUG
+#ifdef _TEST
 						stringstream distMissInfo;
 						distMissInfo << "[!Error!] Cannot find distribution info for sram: " 
 							<< elemInstName << "(" << _cfgHir._curElementInst->get_ref() << ")" << "." << sramName 
@@ -111,7 +111,7 @@ namespace bitgen {
 						int wl = lexical_cast<int>( _cfgHir._curDist->get_wl() );
 						newSram.localPos = Point( bl, wl );
 
-#ifdef _DEBUG
+#ifdef _TEST
 						std::cout << newSram << std::endl;
 #endif
 						sramVec.push_back(newSram);
