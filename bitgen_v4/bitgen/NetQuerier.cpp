@@ -18,12 +18,19 @@ namespace bitgen {
 #endif
 				// Find the tile inst according to the tile inst name of the pip
 				_cfgHir._curTileInst = _cfgHir._curArch->find_tile_inst_by_name( pip.tileName );
-				assert( _cfgHir._curTileInst != NULL );
-				
+				//assert( _cfgHir._curTileInst != NULL );
+#ifdef _TEST
+				stringstream tileInstMissInfo;
+				tileInstMissInfo << "[!Error!] Cannot find tile inst: " << pip.tileName;
+				CONDITIONAL_THROW (
+					_cfgHir._curTileInst != 0,
+					CilInfoMissException, 
+					tileInstMissInfo.str()
+					)
+#endif
 				// Find the tile type of the tile inst
 				string tileTypeName = _cfgHir._curTileInst->get_ref();
-
-				
+	
 				_cfgHir._curTile = _cil.root()->get_tile_lib()->find_tile_by_name( tileTypeName );
 				//assert( _cfgHir._curTile != NULL );
 				if ( _cfgHir._curTile == NULL ) {
@@ -49,9 +56,18 @@ namespace bitgen {
 				}
 
 				string grmName = _cfgHir._curGrmInst->get_ref();
+				//std::cout << grmName << std::endl;
 				_cfgHir._curGrm = _cil.root()->get_grm_lib()->find_grm_by_name( grmName );
-				assert( _cfgHir._curGrm );
-
+				//assert( _cfgHir._curGrm );
+#ifdef _TEST
+				stringstream grmMissInfo;
+				grmMissInfo << "[!Error!] Cannot find grm type: " << grmName;
+				CONDITIONAL_THROW (
+					_cfgHir._curGrm != NULL,
+					CilInfoMissException, 
+					grmMissInfo.str()
+					)
+#endif
 
 				_cfgHir._curRoute = _cfgHir._curGrm->find_route_by_src_and_snk( pip.srcNet, pip.snkNet );
 				//assert( _cfgHir._curRoute );
@@ -70,12 +86,31 @@ namespace bitgen {
 
 					_cfgHir._curElementInst = 
 						_cfgHir._curGrm->find_element_inst_by_name( elemInstName );
-					assert( _cfgHir._curElementInst );
-
+//					assert( _cfgHir._curElementInst );
+#ifdef _TEST
+					stringstream elemInstMissInfo;
+					elemInstMissInfo << "[!Error!] Cannot find element inst: " << elemInstName
+						<< " in grm: " << _cfgHir._curGrm->get_name();
+					CONDITIONAL_THROW (
+						_cfgHir._curElementInst != NULL,
+						CilInfoMissException, 
+						elemInstMissInfo.str()
+						)
+#endif
+					string eleType = _cfgHir._curElementInst->get_ref();
 					_cfgHir._curElement = 
-						_cil.root()->get_element_lib()->find_element_by_name(_cfgHir._curElementInst->get_ref());
-					assert( _cfgHir._curElement );
+						_cil.root()->get_element_lib()->find_element_by_name(eleType);
+					//assert( _cfgHir._curElement );
+#ifdef _TEST
+					stringstream elemMissInfo;
+					elemMissInfo << "[!Error!] Cannot find element type: " << eleType;
 
+					CONDITIONAL_THROW (
+						_cfgHir._curElement != NULL,
+						CilInfoMissException, 
+						elemMissInfo.str()
+						)
+#endif
 					_cfgHir._curPath = _cfgHir._curElement->find_path_by_from_and_to( from, to );
 					
 					// Find all the srams controlling the path and get the info of them

@@ -65,7 +65,9 @@ namespace bitgen {
 
 			// If the current tile is not listed in the confugrable tile list, just ignore it.
 			if ( !CFG_TILES.count(tileName) ) {
+#ifdef _TEST
 				std::cout << "  <Warning>  There is no configuration for tile: " << tileName << std::endl;
+#endif
 				continue;
 			}
 
@@ -105,12 +107,14 @@ namespace bitgen {
 
 
 				string clusterName = siteInstGlobalName.substr( 0, sit );
-#ifdef _TEST
+
 				if ( !CFG_CLUSTERS.count(clusterName) ) {
+#ifdef _TEST
 					std::cout << "  <Warning>  There is no configuration for cluster: " << clusterName << std::endl;
+#endif
 					continue;
 				}
-#endif
+
 				string xyCoordination = siteInstGlobalName.substr( sit + 1 );
 				// Find current cluster inst
 				_cfgHir._curClusterInst = _cfgHir._curTile->find_cluster_inst_by_name( clusterName );

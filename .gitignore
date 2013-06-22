@@ -59,7 +59,7 @@ build/
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
+*.exe
 *_i.c
 *_p.c
 *.ilk
@@ -83,6 +83,13 @@ build/
 *.pidb
 *.log
 *.scc
+*.tlog
+*.manifest
+*.lastbuildstate
+*.unsuccessfulbuild
+*.rc
+*.idb
+*.res
 
 # Visual C++ cache files
 ipch/
