@@ -74,7 +74,7 @@ std::string ExceptionBase::GetMessage() const
 //        return "<Unknown error: backtrace_symbols returned NULL>\n";
 // 
 //    std::string result;
-//    for (size_t i = 0; i < mStackTraceSize; ++i)
+//    for (int i = 0; i < mStackTraceSize; ++i)
 //    {
 //        std::string mangledName = strings[i];
 //        std::string::size_type begin = mangledName.find('(');

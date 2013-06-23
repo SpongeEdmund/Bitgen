@@ -334,7 +334,7 @@ namespace bitgen {
 		// Then we config the sram related to the equation
 		vector<int> truthTable = Exp2LUT( right, 16 ).toVec();
 
-		for ( size_t i = 0; i < truthTable.size(); ++i ) {
+		for ( unsigned i = 0; i < truthTable.size(); ++i ) {
 
 			int bitValue = truthTable[i];
 
@@ -402,7 +402,7 @@ namespace bitgen {
 			Bin2BitVec( bits, bitstr );
 		}
 
-		for ( size_t i = 0; i < bits.size(); ++i ) {
+		for ( unsigned i = 0; i < bits.size(); ++i ) {
 
 			int bitValue = bits[i];
 

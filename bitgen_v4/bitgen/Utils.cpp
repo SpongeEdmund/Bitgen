@@ -52,8 +52,10 @@ void Bin2BitVec( std::vector<int>& bin, const std::string & binExp )
 const string GetCurrentTime()
 {
 	time_t t = time(0); 
-	char tmp[64]; 
-	strftime( tmp, sizeof(tmp), "%Y/%m/%d %X %A", localtime(&t) );
+	char tmp[64];
+	struct tm newTime;
+	localtime_s( &newTime, &t);
+	strftime( tmp, sizeof(tmp), "%Y/%m/%d %X %A", &newTime );
 	return string(tmp);
 }
 
@@ -66,8 +68,8 @@ void ShowRunningInfo( std::ostream& os, std::string & info, int indent )
 unsigned BitVec2U( const std::vector<int>& bitVec )
 {
 	unsigned int u = 0;
-	for( size_t i = 0; i < bitVec.size(); ++i ) {
-		u = u << 1 + bitVec[i];
+	for( unsigned i = 0; i < bitVec.size(); ++i ) {
+		u = (u << 1) + bitVec[i];
 	}
 	return u;
 }

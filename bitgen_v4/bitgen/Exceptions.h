@@ -60,7 +60,7 @@ protected:
 private:
 	//enum { MAX_STACK_TRACE_SIZE = 50 };
 	//void* mStackTrace[MAX_STACK_TRACE_SIZE];
-	//size_t mStackTraceSize;
+	//int mStackTraceSize;
 	mutable std::string mWhat;
 };
 
@@ -83,8 +83,15 @@ public:
 	MY_DEFINE_EXCEPTION( UnknownAttrTypeException, ExceptionBase )
 };
 
+class SramRangeOverflow : public ExceptionBase
+{
+public:
+	MY_DEFINE_EXCEPTION( SramRangeOverflow, ExceptionBase )
+};
+
+
 #define CONDITIONAL_THROW( cond, expc, msg ) \
-	if (!cond) \
+	if (!(cond)) \
 		MY_THROW(expc, msg);
 
 #endif

@@ -37,13 +37,14 @@ namespace bitgen {
 
 		//assert( !_instQuerier );
 		_instQuerier = new InstQuerier( *_cil, *_netlist );
-		std::cout << "  >> Generating bitstream for instances ..." << std::endl;
+		std::cout << "  >> Generating SRAM map for instances ..." << std::endl;
 		_instQuerier->runQuery( _sramVec );
 	
 		_netQuerier = new NetQuerier( *_cil, *_netlist );
-		std::cout << "  >> Generating bitstream for nets ..." << std::endl;
+		std::cout << "  >> Generating SRAM map for nets ..." << std::endl;
 		_netQuerier->runQuery( _sramVec );
 
+		std::cout << "  >> Mapping to bitstream ..." << std::endl;
 		_bitstream->loadSrams( _sramVec );
 
 	}

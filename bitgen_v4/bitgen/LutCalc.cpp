@@ -23,7 +23,7 @@ void Exp2LUT::BinaryToTable(){
 
 void Exp2LUT::HexToTable(){
 	int hex = 0;
-	sscanf(_expr.c_str(), "%x", &hex);
+	sscanf_s(_expr.c_str(), "%x", &hex);
 
 	for(int flag = 0x8000, id = _bitAmount - 1; flag != 0; flag >>= 1, --id){
 		_vecTable[id] = hex & flag ?  1  :  0 ;

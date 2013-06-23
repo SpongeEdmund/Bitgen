@@ -7,8 +7,6 @@
 #include <set>
 #include <iostream>
 #include <boost/assign.hpp>
-#include <boost/optional.hpp>
-#include <boost/utility/in_place_factory.hpp>
 
 
 

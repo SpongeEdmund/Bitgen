@@ -5,6 +5,8 @@
 //#include <cstdlib>
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
+#include "Exceptions.h"
+
 namespace bitgen {
 
 #define foreach BOOST_FOREACH
@@ -47,8 +49,9 @@ namespace bitgen {
 		int totalFrames = lexical_cast<int>( f * w * s );
 		int wordsPerFrame = lexical_cast<int>( _curPlan->get_words_per_frame() );
 		WORD initWord = initValue ? ALL_ONE : ALL_ZERO;
+		_size = totalFrames * wordsPerFrame;
 #ifdef _TEST
-		std::cout << "The word amount is " << totalFrames * wordsPerFrame << std::endl;
+		std::cout << "The word amount is " << _size << std::endl;
 
 #endif
 		// read in the total words amount from cil
@@ -69,7 +72,7 @@ namespace bitgen {
 	}
 	
 
-	void BitStream::resetBit( const size_t idx )
+	void BitStream::resetBit( const int idx )
 	{
 		int prevWord = idx / 32;
 		int offsetBit = idx % 32;
@@ -78,24 +81,38 @@ namespace bitgen {
 
 	void BitStream::resetBit( const SramBit & tilePos )
 	{
-		size_t idx = mapSramToIdx( tilePos );
+		int idx = mapSramToIdx( tilePos );
 		resetBit( idx );
 	}
 
 	//! map the point pos to sequence index of the vector
-	size_t BitStream::mapSramToIdx( const SramBit & s )
+	int BitStream::mapSramToIdx( const SramBit & s )
 	{
-		size_t idx = 0;
+#ifdef _TEST
+		std::cout << s << std::flush;
+#endif
+		int idx = 0;
 		Point actualPos = s.tilePos + s.offset;
 		// We need to calculate the Segment address and Packet address of the tile
 		string colStr = lexical_cast<string>( actualPos.getY() );
-		size_t packetAddr = lexical_cast<size_t>( _curPlan->find_packet_by_col(colStr)->get_address() );
+		packet* p = _curPlan->find_packet_by_col(colStr);
+
+#ifdef _TEST
+		stringstream packetMissInfo;
+		packetMissInfo << "<Error> Cannot find a packet in column: " << colStr;
+		CONDITIONAL_THROW(
+			p != NULL,
+			CilInfoMissException,
+			packetMissInfo.str()
+			)
+#endif
+		int packetAddr = lexical_cast<int>( p->get_address() );
 		
 
 		segment* curSegment = _curPlan->first_segment();
 		while( curSegment ) {
-			size_t curSegmentRow = lexical_cast<size_t>( curSegment->get_row() );
-			size_t rowsPerSegment = lexical_cast<size_t>( _curPlan->get_rows_per_segment() );
+			int curSegmentRow = lexical_cast<int>( curSegment->get_row() );
+			int rowsPerSegment = lexical_cast<int>( _curPlan->get_rows_per_segment() );
 			if ( actualPos.getX() >= curSegmentRow && actualPos.getX() - curSegmentRow < rowsPerSegment ) { 
 				
 				break;
@@ -104,20 +121,20 @@ namespace bitgen {
 		}
 
 		// Frames per segment
-		size_t fps = lexical_cast<size_t>( _curPlan->get_frames_per_segment() );
+		int fps = lexical_cast<int>( _curPlan->get_frames_per_segment() );
 		// Words per frame
-		size_t wpf = lexical_cast<size_t>( _curPlan->get_words_per_frame() );
+		int wpf = lexical_cast<int>( _curPlan->get_words_per_frame() );
 		
 		
-		size_t segmentAddr = lexical_cast<size_t>(curSegment->get_address());
+		int segmentAddr = lexical_cast<int>(curSegment->get_address());
 		idx += segmentAddr * fps * wpf * 32 ;
 
 		packet* curPacket;
-		for ( size_t i = 0; i < packetAddr; ++i )
+		for ( int i = 0; i < packetAddr; ++i )
 		{
 			string curPacketAddrStr = lexical_cast<string>(i);
 			curPacket = _curPlan->find_packet_by_address(curPacketAddrStr);
-			size_t frameAmount = lexical_cast<size_t>(curPacket->get_frame_amount());
+			int frameAmount = lexical_cast<int>(curPacket->get_frame_amount());
 			idx += frameAmount * wpf * 32 ;
 			
 		}
@@ -126,7 +143,7 @@ namespace bitgen {
 		idx += wpf * s.localPos.getY();
 		
 		// Add front bits in current frame
-		size_t segmentRow = lexical_cast<size_t>(curSegment->get_row());
+		int segmentRow = lexical_cast<int>(curSegment->get_row());
 		for ( int r = segmentRow; r < actualPos.getX() ; ++r ) {
 
 			stringstream curPosStr;
@@ -137,7 +154,15 @@ namespace bitgen {
 			string tileType = curTileInst->get_ref();
 			
 			tile* curTile = _cil.root()->get_tile_lib()->find_tile_by_name(tileType);
-			assert( curTile );
+#ifdef _TEST
+			stringstream tileTypeMissInfo;
+			tileTypeMissInfo << "[!Error!] Cannot find tile type: " << tileType;
+			CONDITIONAL_THROW (
+				curTile != 0,
+				CilInfoMissException, 
+				tileTypeMissInfo.str()
+				)
+#endif
 
 			Point localSize = lexical_cast<Point>(curTile->get_scale());
 			int localRowSize = localSize.getX();
@@ -146,6 +171,17 @@ namespace bitgen {
 		}
 		// Add local bit line number
 		idx += s.localPos.getX();
+#ifdef _TEST
+		std::cout << " idx:" << idx  << std::endl;
+
+		stringstream soinfo;
+		soinfo << "SRAM bitstream position overflows: " << s << " idx: "<< idx << " max: " << _size;
+		CONDITIONAL_THROW(
+			idx < _size,
+			SramRangeOverflow, 
+			soinfo.str()
+			)
+#endif
 		return idx;
 	}
 

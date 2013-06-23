@@ -31,7 +31,7 @@ namespace bitgen {
 		typedef std::vector<SramBit> SramVec;
 
 		//! Constructor
-		BitStream( const Cil& c ) : _cil(c), _curChip(0), _curPlan(0) {}
+		BitStream( const Cil& c ) : _cil(c), _size(0), _curChip(0), _curPlan(0) {}
 
 		void init( bool initVal = true );
 
@@ -42,14 +42,14 @@ namespace bitgen {
 		void printBody( std::ostream & ) const;
 		void printTail( std::ostream & ) const;
 		
-		void setBit( const size_t idx );
+		void setBit( const int idx );
 		void setBit( const Point & tilePos );
-		void resetBit( const size_t idx );
+		void resetBit( const int idx );
 		void resetBit( const SramBit & tilePos );
 	
 		friend std::ostream & operator<< ( std::ostream &, const BitStream & );
 	private:
-		size_t mapSramToIdx( const SramBit & pt );
+		int mapSramToIdx( const SramBit & pt );
 	private:
 
 		//! stream is composed by 32-bit words
@@ -62,6 +62,7 @@ namespace bitgen {
 			the reference to other cil.
 		*/
 		const Cil& _cil;
+		int _size;
 		chip* _curChip;
 		plan* _curPlan;
 	};
