@@ -188,15 +188,6 @@
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="XdlNLHandler.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="cil_sample.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="fdp5p15_cil_2013_0414_2151.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="netlist_sample.xdl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

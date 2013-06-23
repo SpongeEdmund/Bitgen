@@ -170,15 +170,4 @@
       <Filter>Source Files\query</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="netlist_sample.xdl">
-      <Filter>InputSamples</Filter>
-    </None>
-    <None Include="cil_sample.xml">
-      <Filter>InputSamples</Filter>
-    </None>
-    <None Include="fdp5p15_cil_2013_0414_2151.xml">
-      <Filter>InputSamples</Filter>
-    </None>
-  </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 #include <ctime>
 
 #include "BitGenApp.h"
-//#include "Args.h"
+
 
 using namespace std;
 using namespace bitgen;
@@ -14,6 +14,7 @@ int main( int argc, char* argv[] )
 		ARGS.parse( argc, argv );
 		BitGenApp& app = BitGenApp::instance();
 		app.run();
+		std::cout << ">>| Run successfully!!!" << std::endl;
 	} 
 	catch( std::exception & e ) {
 		std::cout << e.what() << std::endl;

@@ -46,16 +46,15 @@ namespace bitgen {
 		int w = lexical_cast<int>( _curPlan->get_words_per_frame() ); 
 		int s = lexical_cast<int>( _curPlan->get_segment_amount() );
 
-		int totalFrames = lexical_cast<int>( f * w * s );
-		int wordsPerFrame = lexical_cast<int>( _curPlan->get_words_per_frame() );
+		_size = lexical_cast<int>( f * w * s );
+		//int wordsPerFrame = lexical_cast<int>( _curPlan->get_words_per_frame() );
 		WORD initWord = initValue ? ALL_ONE : ALL_ZERO;
-		_size = totalFrames * wordsPerFrame;
 #ifdef _TEST
 		std::cout << "The word amount is " << _size << std::endl;
 
 #endif
 		// read in the total words amount from cil
-		_body.resize( totalFrames * wordsPerFrame, initWord );
+		_body.resize( _size, initWord );
 
 
 	}
@@ -108,6 +107,8 @@ namespace bitgen {
 #endif
 		int packetAddr = lexical_cast<int>( p->get_address() );
 		
+		//??
+		//std::cout << "Current packet: " << packetAddr << std::endl;
 
 		segment* curSegment = _curPlan->first_segment();
 		while( curSegment ) {
@@ -120,6 +121,8 @@ namespace bitgen {
 			curSegment = curSegment->next_segment();
 		}
 
+
+
 		// Frames per segment
 		int fps = lexical_cast<int>( _curPlan->get_frames_per_segment() );
 		// Words per frame
@@ -127,9 +130,19 @@ namespace bitgen {
 		
 		
 		int segmentAddr = lexical_cast<int>(curSegment->get_address());
+		//??
+		//std::cout << "Current segment: " << segmentAddr << std::endl;
+
+
 		idx += segmentAddr * fps * wpf * 32 ;
+		
+		//??
+		//std::cout << "Now index is: " << idx << std::endl;
 
 		packet* curPacket;
+		
+		//??
+		//std::cout << "Add up all front packets." << std::endl;
 		for ( int i = 0; i < packetAddr; ++i )
 		{
 			string curPacketAddrStr = lexical_cast<string>(i);
@@ -138,11 +151,20 @@ namespace bitgen {
 			idx += frameAmount * wpf * 32 ;
 			
 		}
-		
+		//??
+		//std::cout << "Now index is: " << idx << std::endl;
+
 		// Add front frames
-		idx += wpf * s.localPos.getY();
-		
+		//??
+		//std::cout << "Add up all front local frames." << std::endl;
+		idx += wpf * s.localPos.getY() * 32;
+		//??
+		//std::cout << "Now index is: " << idx << std::endl;
 		// Add front bits in current frame
+
+		//??
+		//std::cout << "Add up all front local bits." << std::endl;
+		
 		int segmentRow = lexical_cast<int>(curSegment->get_row());
 		for ( int r = segmentRow; r < actualPos.getX() ; ++r ) {
 
@@ -169,15 +191,18 @@ namespace bitgen {
 			
 			idx += localRowSize;
 		}
+		//??
+		//std::cout << "Now index is: " << idx << std::endl;
 		// Add local bit line number
 		idx += s.localPos.getX();
+
 #ifdef _TEST
 		std::cout << " idx:" << idx  << std::endl;
 
 		stringstream soinfo;
-		soinfo << "SRAM bitstream position overflows: " << s << " idx: "<< idx << " max: " << _size;
+		soinfo << "SRAM bitstream position overflows: " << s << " idx: "<< idx << " max: " << _size * 32;
 		CONDITIONAL_THROW(
-			idx < _size,
+			idx < _size * 32,
 			SramRangeOverflow, 
 			soinfo.str()
 			)

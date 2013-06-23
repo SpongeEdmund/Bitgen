@@ -34,19 +34,32 @@ namespace bitgen {
 		_bitstream = new BitStream( *_cil );
 		_bitstream->init();
 		
+		double time1 = static_cast<double>( clock() );
 
 		//assert( !_instQuerier );
 		_instQuerier = new InstQuerier( *_cil, *_netlist );
 		std::cout << "  >> Generating SRAM map for instances ..." << std::endl;
 		_instQuerier->runQuery( _sramVec );
+
+		double time2 = static_cast<double>( clock() );
+		std::cout << "  >> Time elasped " << (time2 - time1) * 1e-3 << "s." << std::endl;
 	
 		_netQuerier = new NetQuerier( *_cil, *_netlist );
 		std::cout << "  >> Generating SRAM map for nets ..." << std::endl;
 		_netQuerier->runQuery( _sramVec );
+		double time3 = static_cast<double>( clock() );
+		std::cout << "  >> Time elasped " << (time3 - time2) * 1e-3 << "s." << std::endl;
+		//SramBit s;
+		//s.bitValue = 0;
+		//s.localPos = Point(79,63);
+		//s.tilePos = Point(71,54);
+		//s.offset = Point(0,0);
+		//_sramVec.push_back(s);
 
 		std::cout << "  >> Mapping to bitstream ..." << std::endl;
 		_bitstream->loadSrams( _sramVec );
-
+		double time4 = static_cast<double>( clock() );
+		std::cout << "  >> Time elasped " << (time4 - time3) * 1e-3 << "s." << std::endl;
 	}
 
 	void BitGenApp::run()

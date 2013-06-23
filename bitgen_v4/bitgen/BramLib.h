@@ -1,13 +1,13 @@
 //! The bram library gives the correspondance of the bram address and the bl 
 /*! 
   <bram_lib>
-    <bram type="INIT" wl="20" offset="-1,0">
+    <bram type="INIT" wl="20" offset="0,0">
 	  <cell address="0" bl="4" inv="no"/>
 	  <cell address="1" bl="5" inv="no"/>
 	  <cell address="2" bl="14" inv="no"/>
 	  ...
 	</bram>
-	<bram type="INITP" wl="20" offset="-1,0">
+	<bram type="INITP" wl="20" offset="0,0">
 	  <cell address="0" bl="23" inv="no"/>
 	  <cell address="1" bl="24" inv="no"/>
 	  ...
