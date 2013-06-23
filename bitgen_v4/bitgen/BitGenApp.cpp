@@ -42,13 +42,13 @@ namespace bitgen {
 		_instQuerier->runQuery( _sramVec );
 
 		double time2 = static_cast<double>( clock() );
-		std::cout << "  >> Time elasped " << (time2 - time1) * 1e-3 << "s." << std::endl;
+		std::cout << "    >> Time elapsed " << (time2 - time1) * 1e-3 << "s." << std::endl;
 	
 		_netQuerier = new NetQuerier( *_cil, *_netlist );
 		std::cout << "  >> Generating SRAM map for nets ..." << std::endl;
 		_netQuerier->runQuery( _sramVec );
 		double time3 = static_cast<double>( clock() );
-		std::cout << "  >> Time elasped " << (time3 - time2) * 1e-3 << "s." << std::endl;
+		std::cout << "    >> Time elapsed " << (time3 - time2) * 1e-3 << "s." << std::endl;
 		//SramBit s;
 		//s.bitValue = 0;
 		//s.localPos = Point(79,63);
@@ -56,10 +56,15 @@ namespace bitgen {
 		//s.offset = Point(0,0);
 		//_sramVec.push_back(s);
 
+		int sramAmount = _sramVec.size();
+		float per = static_cast<float>(sramAmount) / static_cast<float>(_bitstream->getSize()*32) * 100;
+
+		std::cout << "    >> Value changed SRAM amount : " << _sramVec.size() 
+			<< "(" << per << "%)"<< std::endl;
 		std::cout << "  >> Mapping to bitstream ..." << std::endl;
 		_bitstream->loadSrams( _sramVec );
 		double time4 = static_cast<double>( clock() );
-		std::cout << "  >> Time elasped " << (time4 - time3) * 1e-3 << "s." << std::endl;
+		std::cout << "    >> Time elapsed " << (time4 - time3) * 1e-3 << "s." << std::endl;
 	}
 
 	void BitGenApp::run()
@@ -77,7 +82,7 @@ namespace bitgen {
 		loadNetlist( ARGS.NETLIST );
 //#ifdef _TEST
 		double _loadNlTime = static_cast<double>( clock() );
-		std::cout << "  >> Time elasped " << (_loadNlTime-_loadCilTime) * 1e-3 << "s." << std::endl;
+		std::cout << "  >> Time elapsed " << (_loadNlTime-_loadCilTime) * 1e-3 << "s." << std::endl;
 //#endif
 
 		genBitStream();
@@ -85,7 +90,7 @@ namespace bitgen {
 		// outputBitstream( std::cout );
 		//#ifdef _TEST
 		double _genBsTime = static_cast<double>( clock() );
-		std::cout << "  >> Time elasped " << (_genBsTime - _loadNlTime) * 1e-3 << "s." << std::endl;
+		std::cout << "  >> Time elapsed " << (_genBsTime - _loadNlTime) * 1e-3 << "s." << std::endl;
 		//#endif
 		ofstream bitstrFile( ARGS.BITSTREAM );
 
@@ -93,7 +98,7 @@ namespace bitgen {
 		outputBitstream( bitstrFile );
 //#ifdef _TEST
 		double _outBsTime = static_cast<double>( clock() );
-		std::cout << "  >> Time elasped " << (_outBsTime-_genBsTime) * 1e-3 << "s." << std::endl;
+		std::cout << "  >> Time elapsed " << (_outBsTime-_genBsTime) * 1e-3 << "s." << std::endl;
 //#endif
 	}
 

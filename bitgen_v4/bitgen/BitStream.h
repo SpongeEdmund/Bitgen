@@ -46,6 +46,8 @@ namespace bitgen {
 		void setBit( const Point & tilePos );
 		void resetBit( const int idx );
 		void resetBit( const SramBit & tilePos );
+
+		int getSize() const { return _size; }
 	
 		friend std::ostream & operator<< ( std::ostream &, const BitStream & );
 	private:

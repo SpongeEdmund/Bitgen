@@ -62,7 +62,7 @@ Netlist* XdlNlHandler::parse( const string &file )
 			//cout << "parsing design" << endl;
 			const string designRe =
 				// [1]=designName [2]=deviceName [3]=package [4]=speed [5]=ncdVersion
-				"\"(.*?)\"\\s+([a-z]+\\d+[a-z]+\\d+)(\\w+)(-\\d+)\\s+([vV]\\d+\\.\\d+)\\s*"
+				"\"(.*?)\"\\s+([a-z]+\\d+[a-z]+\\d+)(\\w+)(-\\d+)\\s+([vV]\\d+\\.\\d+)\\s*.*"
 			;
 
 			sregex designRegex = sregex::compile(designRe);
@@ -125,7 +125,7 @@ Netlist* XdlNlHandler::parse( const string &file )
 				{
 					//ignored_attribute;
 					// modified on 2013 3 12
-					if (what[1] == "_INST_PROP" && what[1] == "_BEL_PROP" )
+					if (what[1] == "_INST_PROP" || what[1] == "_BEL_PROP" )
 						continue;
 
 
@@ -153,21 +153,22 @@ Netlist* XdlNlHandler::parse( const string &file )
 			}
 			_netlist->insts.push_back(aInst);
 			
-		} else {
+		} else if ( objName == "net") {
 			
 			NetlistNet aNet;
 			// cout << "parsing net" << endl;
 			// 
 			// cout << objInfo << endl;
-			const string netRe = 
+			const string netRe1 = 
 				"\"(.*?)\"(\\s+(gnd|vcc))?\\s*,\\s*\\n*(.*?)\\s*\\n*"
 			;
-			sregex netRegex = sregex::compile(netRe);
+			sregex netRegex = sregex::compile(netRe1);
 			
 			smatch what;
 			
 			bool mNetRegex = regex_match(objInfo, what, netRegex);
-			assert(mNetRegex);
+			
+			if ( !mNetRegex ) continue;
 
 			aNet.netName = what[1];
 			string netInfo = what[4];
@@ -211,6 +212,8 @@ Netlist* XdlNlHandler::parse( const string &file )
 				++pos;
 			} // end of net info parsing
 			_netlist->nets.push_back(aNet);
+		} else {
+			// Throw unknown type of netlist
 		}
 		++pos;
 	}
