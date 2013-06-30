@@ -125,9 +125,10 @@ Netlist* XdlNlHandler::parse( const string &file )
 				{
 					//ignored_attribute;
 					// modified on 2013 3 12
-					if (what[1] == "_INST_PROP" || what[1] == "_BEL_PROP" )
+					if (what[1] == "_INST_PROP" || what[1] == "_BEL_PROP" ) {
+						++pos;
 						continue;
-
+					}
 
 					InstCfg aInstCfg;
 					aInstCfg._attribute = what[1];
