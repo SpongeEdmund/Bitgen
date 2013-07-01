@@ -1,15 +1,16 @@
 ﻿#include "BitGenApp.h"
 #include "Args.h"
 #include "XdlNlHandler.h"
+#include <iomanip>
 #include <fstream>
-
+#include <boost/lexical_cast.hpp>
 namespace bitgen {
 
 	using std::string;
 	using std::cout;
 	using std::endl;
 	using std::ofstream;
-
+	using boost::lexical_cast;
 	void BitGenApp::loadCil(const string & cilFile) 
 	{
 		std::cout << ">>| Loading cil file " << cilFile << std::endl;
@@ -24,6 +25,8 @@ namespace bitgen {
 		
 		XdlNlHandler* xdlNlHandler = new XdlNlHandler;
 		_netlist = xdlNlHandler->parse(netlistFile);
+		_usedSlices = xdlNlHandler->getUsedSliceNum();
+
 		delete xdlNlHandler;
 	}
 
@@ -43,7 +46,8 @@ namespace bitgen {
 
 		double time2 = static_cast<double>( clock() );
 		std::cout << "    >> Time elapsed " << (time2 - time1) * 1e-3 << "s." << std::endl;
-	
+		
+
 		_netQuerier = new NetQuerier( *_cil, *_netlist );
 		std::cout << "  >> Generating SRAM map for nets ..." << std::endl;
 		_netQuerier->runQuery( _sramVec );
@@ -100,6 +104,10 @@ namespace bitgen {
 		double _outBsTime = static_cast<double>( clock() );
 		std::cout << "  >> Time elapsed " << (_outBsTime-_genBsTime) * 1e-3 << "s." << std::endl;
 //#endif
+		int sliceAmount = lexical_cast<int>(_cil->root()->get_chip_lib()->find_chip_by_name(ARGS.DEVICE)->get_slice_amount());
+		
+		std::cout << ">>| Slice utilization: " << _usedSlices << "(" <<
+			std::setprecision(5) << static_cast<double>(_usedSlices) / static_cast<double>(sliceAmount)*100 << "%)" << std::endl;
 	}
 
 }

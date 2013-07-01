@@ -6,7 +6,7 @@ using namespace boost::xpressive;
 
 // Constructor
 XdlNlHandler::XdlNlHandler()
-	:_netlist(0)
+	:_netlist(0), _usedSlices(0)
 {
 	
 }
@@ -104,6 +104,10 @@ Netlist* XdlNlHandler::parse( const string &file )
 
 			aInst._instName   = what[1];
 			aInst._siteDef    = what[2];
+			
+			if ( aInst._siteDef.substr(0,5) == "SLICE" ) 
+				++_usedSlices;
+			
 			aInst._placedTile = what[3];
 			aInst._placedSite = what[4];
 

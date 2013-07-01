@@ -47,7 +47,8 @@ namespace bitgen
 			: _cil(0),
 			  _netlist(0),
 			  _instQuerier(0),
-			  _bitstream(0)
+			  _bitstream(0),
+			  _usedSlices(0)
 		{
 			std::cout << ">> ------Bitgen started at " << GetCurrentTime() << "------" << std::endl;
 			_startTime = static_cast<double> ( clock() );
@@ -94,6 +95,9 @@ namespace bitgen
 		double _startTime;
 		//! End time of the process
 		double _endTime;
+
+		//! Slices used
+		int _usedSlices;
 
 	};
 

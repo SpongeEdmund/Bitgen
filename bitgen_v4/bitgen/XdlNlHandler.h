@@ -30,12 +30,17 @@ public:
 	XdlNlHandler();
 	~XdlNlHandler();
 	Netlist* parse(const string &file);
+	int getUsedSliceNum() const { return _usedSlices; }
 private:
 	Netlist *_netlist;
 	string _contents;
 
 	// 将xdl网标load进_contents里
 	void loadXdl( const string &file);
+
+
+
+	int _usedSlices;
 };
 
 

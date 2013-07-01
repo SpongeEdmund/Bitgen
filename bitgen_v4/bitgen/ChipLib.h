@@ -121,6 +121,7 @@ DEFINE_NODE(chip)
 {
 public:
 	HAS_ATTRIBUTE(name)
+	HAS_ATTRIBUTE(slice_amount)
 	HAS_ONE_CHILD(arch)
 	HAS_ONE_CHILD(plan)
 	HAS_CHILDREN_FOUND_BY1(package, name)
