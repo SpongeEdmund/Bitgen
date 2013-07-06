@@ -47,12 +47,14 @@ public:
 	HAS_ATTRIBUTE(name)
 	HAS_ATTRIBUTE(ref)
 	HAS_ATTRIBUTE(pos)
+	HAS_SIBLING(tile_inst)
 };
 
 DEFINE_NODE(arch)
 {
 public:
 	HAS_ATTRIBUTE(scale)
+	HAS_CHILDREN(tile_inst)
 	HAS_CHILDREN_FOUND_BY1(tile_inst, name)
 	HAS_CHILDREN_FOUND_BY1(tile_inst, pos)
 };

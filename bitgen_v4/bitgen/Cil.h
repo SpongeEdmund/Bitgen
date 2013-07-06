@@ -6,7 +6,7 @@
 
 #define TRY_FIND_OBJ_IN_CIL( obj, get ) \
 	if ( !(obj = get) ) \
-		throw std::exception("Cannot find "#obj" through "#get);
+		throw std::exception("Cannot find "#obj" through "#get );
 
 class Cil
 {

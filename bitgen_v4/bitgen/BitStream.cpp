@@ -6,7 +6,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 #include "Exceptions.h"
-
+#include <ctime>
 namespace bitgen {
 
 #define foreach BOOST_FOREACH
@@ -19,6 +19,7 @@ namespace bitgen {
 	using std::stringstream;
 	using std::endl;
 	using boost::lexical_cast;
+	using std::make_pair;
 
 	string _COR_REG     = "00000012";
 	string _ID_CODE_REG = "0167c093";
@@ -57,6 +58,14 @@ namespace bitgen {
 		_body.resize( _size, initWord );
 
 
+		// Initial the map of pos and tile
+		arch* curArch = _curChip->get_arch();
+		tile_inst* t = curArch->first_tile_inst(); 
+		for ( ; t ; t = t->next_tile_inst() ) {
+			//_posTileMap.insert( make_pair<string, tile_inst*>(pos, t));
+			_posTileMap.push_back(t);
+		}
+
 	}
 
 
@@ -90,6 +99,10 @@ namespace bitgen {
 #ifdef _TEST
 		std::cout << s << std::flush;
 #endif
+
+#ifdef _MAP_STAT
+		double t0 = static_cast<double>( clock() );
+#endif
 		int idx = 0;
 		Point actualPos = s.tilePos + s.offset;
 		// We need to calculate the Segment address and Packet address of the tile
@@ -111,6 +124,10 @@ namespace bitgen {
 		//std::cout << "Current packet: " << packetAddr << std::endl;
 
 		segment* curSegment = _curPlan->first_segment();
+#ifdef _MAP_STAT
+		double t1 = static_cast<double>( clock() );
+		std::cout << "\nT1: " << t1-t0 << "ms" << std::endl;
+#endif
 		while( curSegment ) {
 			int curSegmentRow = lexical_cast<int>( curSegment->get_row() );
 			int rowsPerSegment = lexical_cast<int>( _curPlan->get_rows_per_segment() );
@@ -120,7 +137,10 @@ namespace bitgen {
 			}
 			curSegment = curSegment->next_segment();
 		}
-
+#ifdef _MAP_STAT
+		double t2 = static_cast<double>( clock() );
+		std::cout << "\nT2: " << t2-t1 << "ms" << std::endl;
+#endif
 
 
 		// Frames per segment
@@ -140,7 +160,10 @@ namespace bitgen {
 		//std::cout << "Now index is: " << idx << std::endl;
 
 		packet* curPacket;
-		
+#ifdef _MAP_STAT
+		double t3 = static_cast<double>( clock() );
+		std::cout << "\nT3: " << t3-t2 << "ms" << std::endl;
+#endif		
 		//??
 		//std::cout << "Add up all front packets." << std::endl;
 		for ( int i = 0; i < packetAddr; ++i )
@@ -151,6 +174,8 @@ namespace bitgen {
 			idx += frameAmount * wpf * 32 ;
 			
 		}
+
+
 		//??
 		//std::cout << "Now index is: " << idx << std::endl;
 
@@ -158,24 +183,44 @@ namespace bitgen {
 		//??
 		//std::cout << "Add up all front local frames." << std::endl;
 		idx += wpf * s.localPos.getY() * 32;
+#ifdef _MAP_STAT
+		double t4 = static_cast<double>( clock() );
+		std::cout << "\nT4: " << t4-t3 << "ms" << std::endl;
+#endif
 		//??
 		//std::cout << "Now index is: " << idx << std::endl;
 		// Add front bits in current frame
 
 		//??
 		//std::cout << "Add up all front local bits." << std::endl;
-		
+
 		int segmentRow = lexical_cast<int>(curSegment->get_row());
+		arch* curArch = _curChip->get_arch();
+		Point tileScale = lexical_cast<Point>(curArch->get_scale()) ;
+		int tilePerRow = tileScale.getY();
+
 		for ( int r = segmentRow; r < actualPos.getX() ; ++r ) {
+#ifdef _MAP_STAT
+			double t50 = static_cast<double>( clock() );
+#endif
+			//stringstream curPosStr;
+			//curPosStr << r << "," << actualPos.getY();
 
-			stringstream curPosStr;
-			curPosStr << r << "," << actualPos.getY();
+			// Here is the bottle neck of query
+			// tile_inst* curTileInst = _curChip->get_arch()->find_tile_inst_by_pos(curPosStr.str());
+			// tile_inst* curTileInst = _posTileMap[curPosStr.str()];
+			int ti = r * tilePerRow + actualPos.getY();
+			tile_inst* curTileInst = _posTileMap[ti];
+#ifdef _MAP_STAT
+			double t51 = static_cast<double>( clock() );
+			std::cout << "\nT51: " << t51-t50 << "ms" << std::endl;
+#endif
 
-			
-			tile_inst* curTileInst = _curChip->get_arch()->find_tile_inst_by_pos(curPosStr.str());
 			string tileType = curTileInst->get_ref();
-			
+
 			tile* curTile = _cil.root()->get_tile_lib()->find_tile_by_name(tileType);
+
+
 #ifdef _TEST
 			stringstream tileTypeMissInfo;
 			tileTypeMissInfo << "[!Error!] Cannot find tile type: " << tileType;
@@ -188,14 +233,21 @@ namespace bitgen {
 
 			Point localSize = lexical_cast<Point>(curTile->get_scale());
 			int localRowSize = localSize.getX();
-			
+
 			idx += localRowSize;
+#ifdef _MAP_STAT
+			double t52 = static_cast<double>( clock() );
+			std::cout << "\nT52: " << t52-t51 << "ms" << std::endl;
+#endif
 		}
 		//??
 		//std::cout << "Now index is: " << idx << std::endl;
 		// Add local bit line number
 		idx += s.localPos.getX();
-
+#ifdef _MAP_STAT
+		double t5 = static_cast<double>( clock() );
+		std::cout << "\nT5: " << t5-t4 << "ms" << std::endl;
+#endif
 #ifdef _TEST
 		std::cout << " idx:" << idx  << std::endl;
 

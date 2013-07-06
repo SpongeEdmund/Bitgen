@@ -2,7 +2,7 @@
 #define __BITSTREAM_H__
 #include <vector>
 #include <string>
-
+#include <map>
 #include "Args.h"
 #include "Cil.h"
 #include "SramBit.h"
@@ -67,6 +67,9 @@ namespace bitgen {
 		int _size;
 		chip* _curChip;
 		plan* _curPlan;
+
+		//std::map<std::string, tile_inst*> _posTileMap;
+		std::vector<tile_inst*> _posTileMap;
 	};
 
 
