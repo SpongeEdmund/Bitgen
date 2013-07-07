@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
 #include <cassert>
 #include "Args.h"
 #include "Netlist.h"
@@ -21,7 +22,7 @@ namespace bitgen {
 
 	typedef std::vector< SramBit > SramVec;
 
-
+	typedef boost::unordered_map<string, tile_inst*> um;
 	
 	//! CfgQuerier, base class of InstQuerier and NetQuerier 
 	/*! 
@@ -60,6 +61,10 @@ namespace bitgen {
 			do not complicate the query process.
 		*/
 		const Netlist & _netlist;
+
+		//std::vector<tile_inst*> _posTileMap;
+		um _nameTileMap;
+		
 	};
 }
 

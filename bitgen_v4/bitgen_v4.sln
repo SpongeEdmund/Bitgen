@@ -7,6 +7,7 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		ForTest|Win32 = ForTest|Win32
+		MapStat|Win32 = MapStat|Win32
 		Release|Win32 = Release|Win32
 		Test|Win32 = Test|Win32
 		TestCil|Win32 = TestCil|Win32
@@ -16,6 +17,8 @@ Global
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Debug|Win32.Build.0 = Debug|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.ForTest|Win32.ActiveCfg = ForTest|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.ForTest|Win32.Build.0 = ForTest|Win32
+		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.MapStat|Win32.ActiveCfg = MapStat|Win32
+		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.MapStat|Win32.Build.0 = MapStat|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Release|Win32.ActiveCfg = Release|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Release|Win32.Build.0 = Release|Win32
 		{17690546-B2E6-4CF7-9FE7-CEFE0ACEF1AA}.Test|Win32.ActiveCfg = Test2|Win32

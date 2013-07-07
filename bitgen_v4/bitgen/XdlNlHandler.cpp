@@ -1,9 +1,9 @@
 #include "XdlNlHandler.h"
-
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace boost::xpressive;
-
+using boost::lexical_cast;
 // Constructor
 XdlNlHandler::XdlNlHandler()
 	:_netlist(0), _usedSlices(0)
@@ -120,12 +120,12 @@ Netlist* XdlNlHandler::parse( const string &file )
 				string aInstCfgInfo = *pos;
 				// cout << "[" << *pos << "]" << endl;
 				// 对属性配置值进行判断
-				sregex instCfgRegex = sregex::compile("(.+?):(.*?):(.*?)");
-
+				sregex instCfgRegex1 = sregex::compile("(.+?):(.*?):(.*?)");
+				sregex instCfgRegex2 = sregex::compile("(.+?)=([01])");
 				//对cfgInfo进行匹配
 				smatch what;
 
-				if ( regex_match(aInstCfgInfo, what, instCfgRegex) ) 
+				if ( regex_match(aInstCfgInfo, what, instCfgRegex1) ) 
 				{
 					//ignored_attribute;
 					// modified on 2013 3 12
@@ -146,6 +146,15 @@ Netlist* XdlNlHandler::parse( const string &file )
 						aInstCfg._option = what[3];
 					}
 
+					aInst._cfgs.push_back(aInstCfg);
+				}
+				// cfg段中以sramName = sramValue的形式来补充用xilinx无法覆盖的配置描述
+				else if ( regex_match( aInstCfgInfo, what, instCfgRegex2 ) )
+				{
+					InstCfg aInstCfg;
+					aInstCfg._type = InstCfg::Sram;
+					aInstCfg._sramName = what[1];
+					aInstCfg._sramVal = lexical_cast<int>( what[2] );
 					aInst._cfgs.push_back(aInstCfg);
 				}
 
@@ -188,7 +197,7 @@ Netlist* XdlNlHandler::parse( const string &file )
 				string netChildType = (*pos)[1], netChildInfo = (*pos)[2];
 				if ( netChildType == "outpin" || netChildType == "inpin" ) {
 					NetPin aPin;
-					aPin.dir = netChildType == "outpin" ? NetPin::Dir::outpin : NetPin::Dir::inpin ;
+					aPin.dir = netChildType == "outpin" ? NetPin::outpin : NetPin::inpin ;
 					sregex pinRegex = sregex::compile("\"(.*?)\"\\s+(\\w+)\\s*");
 					
 					smatch what;

@@ -47,7 +47,8 @@ namespace bitgen {
 			string tileInstName       = inst._placedTile;
 
 			// find current tile inst
-			_cfgHir._curTileInst = _cfgHir._curArch->find_tile_inst_by_name( tileInstName );
+			// _cfgHir._curTileInst = _cfgHir._curArch->find_tile_inst_by_name( tileInstName );
+			_cfgHir._curTileInst = _nameTileMap[tileInstName];
 			//assert( _cfgHir._curTileInst != 0 );
 #ifdef _TEST
 			stringstream tileInstMissInfo;
@@ -204,57 +205,90 @@ namespace bitgen {
 				siteTypeMissInfo.str()
 				)
 #endif	
+			string siteInstName = _cfgHir._curSiteInst->get_name();
 
 			foreach( const InstCfg & instCfg, inst._cfgs ) {
 
-				//Clear the hierarchy
-				
+				if ( instCfg._type == InstCfg::Attribute ) {
+					string attrName = instCfg._attribute;
+					string optionName = instCfg._option;
+					//Ignore option #OFF
+					if ( "#OFF" == optionName || "" == optionName ) continue;
+	#ifdef _TEST
+					std::cout << "<DebugInfo>  Querying for " << attrName << "::" << optionName << "..." << std::endl;
+	#endif
+					_cfgHir._curAttr = _cfgHir._curSite->find_attribute_by_name(attrName);
+					//assert( _cfgHir._curAttr != 0 );
+	#ifdef _TEST
+					stringstream attrMissInfo;
+					attrMissInfo << "[!Error!] Cannot find attribute: " << attrName << " in site: "
+						<< _cfgHir._curSite->get_name();
+					CONDITIONAL_THROW (
+						_cfgHir._curAttr != 0,
+						CilInfoMissException, 
+						attrMissInfo.str()
+						)
+	#endif	
+					// It is very important here
+					// We have 4 main kinds of searching methods
+					// 1. map
+					// 2. equation
+					// 3. bitstr
+					// 4. bram
+					// So I wrote 4 functions to implement.
+					string method = _cfgHir._curAttr->get_method();
 
-				string attrName = instCfg._attribute;
-				string optionName = instCfg._option;
-				//Ignore option #OFF
-				if ( "#OFF" == optionName || "" == optionName ) continue;
-#ifdef _TEST
-				std::cout << "<DebugInfo>  Querying for " << attrName << "::" << optionName << "..." << std::endl;
-#endif
-				_cfgHir._curAttr = _cfgHir._curSite->find_attribute_by_name(attrName);
-				//assert( _cfgHir._curAttr != 0 );
-#ifdef _TEST
-				stringstream attrMissInfo;
-				attrMissInfo << "[!Error!] Cannot find attribute: " << attrName << " in site: "
-					<< _cfgHir._curSite->get_name();
-				CONDITIONAL_THROW (
-					_cfgHir._curAttr != 0,
-					CilInfoMissException, 
-					attrMissInfo.str()
-					)
-#endif	
-				// It is very important here
-				// We have 4 main kinds of searching methods
-				// 1. map
-				// 2. equation
-				// 3. bitstr
-				// 4. bram
-				// So I wrote 4 functions to implement.
-				string method = _cfgHir._curAttr->get_method();
+					// To avoid upper or lower case problem, I unify the string to lower case firstly
+					transform( method.begin(), method.end(), method.begin() , ::tolower );
 
-				// To avoid upper or lower case problem, I unify the string to lower case firstly
-				transform( method.begin(), method.end(), method.begin() , ::tolower );
-
-				if ( "map" == method ) {
-					recordMapSrams( sramVec, optionName );
-				} else if ( "equation" == method ) {
-					recordEqnSrams( sramVec, optionName );
-				} else if ( "bitstr" == method ) {
-					recordBitSrams( sramVec, optionName );
-				} else if ( "bram" == method ) {
-					recordBramSrams( sramVec, attrName, optionName );
+					if ( "map" == method ) {
+						recordMapSrams( sramVec, optionName );
+					} else if ( "equation" == method ) {
+						recordEqnSrams( sramVec, optionName );
+					} else if ( "bitstr" == method ) {
+						recordBitSrams( sramVec, optionName );
+					} else if ( "bram" == method ) {
+						recordBramSrams( sramVec, attrName, optionName );
+					} else {
+						MY_THROW( UnknownAttrTypeException, "[!Error!] Unknown attribute type!");
+					}
 				} else {
-					MY_THROW( UnknownAttrTypeException, "[!Error!] Unknown attribute type!");
+					string sramName = instCfg._sramName;
+					_cfgHir._curDist =
+						_cfgHir._curClusterInst->find_dist_by_inst_and_sram( siteInstName, sramName );
+					//assert( _cfgHir._curDist );
+#ifdef _TEST
+					stringstream distMissInfo;
+					distMissInfo << "[!Error!] Cannot find distribution info for sram: " 
+						<< siteInstName << "(" << _cfgHir._curSiteInst->get_ref() << ")" << "." << sramName 
+						<< " in tile: " << _cfgHir._curTile->get_name()
+						<< " in cluster: " << _cfgHir._curCluster->get_name();
+					CONDITIONAL_THROW (
+						_cfgHir._curDist != 0,
+						CilInfoMissException, 
+						distMissInfo.str()
+						)
+#endif
+
+
+					Point tilePos = lexical_cast<Point>( _cfgHir._curTileInst->get_pos() );
+					Point offset = lexical_cast<Point>(_cfgHir._curDist->get_offset());
+					int bl = lexical_cast<int>( _cfgHir._curDist->get_bl() );
+					int wl = lexical_cast<int>( _cfgHir._curDist->get_wl() );
+
+					Point localPos( bl, wl );
+					int bitValue = instCfg._sramVal;
+
+
+					SramBit newSram;
+					newSram.tilePos = tilePos;
+					newSram.offset = offset;
+					newSram.localPos = localPos;
+					newSram.bitValue = 
+						( _cfgHir._curDist->get_inv() == "yes" ) ? abs(bitValue - 1) : bitValue;
+					sramVec.push_back(newSram);
 				}
 			}
-
-
 		}
 	}
 
@@ -304,7 +338,7 @@ namespace bitgen {
 
 				Point localPos( bl, wl );
 				int bitValue = lexical_cast<int>( s->get_value() );
-			
+
 
 				SramBit newSram;
 				newSram.tilePos = tilePos;

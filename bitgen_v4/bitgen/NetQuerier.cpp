@@ -16,8 +16,10 @@ namespace bitgen {
 				std::cout << "Querying for " << pip.tileName << " "
 					<< pip.srcNet << " -> " << pip.snkNet << std::endl;
 #endif
+
 				// Find the tile inst according to the tile inst name of the pip
-				_cfgHir._curTileInst = _cfgHir._curArch->find_tile_inst_by_name( pip.tileName );
+				//_cfgHir._curTileInst = _cfgHir._curArch->find_tile_inst_by_name( pip.tileName );
+				_cfgHir._curTileInst = _nameTileMap[pip.tileName];
 				//assert( _cfgHir._curTileInst != NULL );
 #ifdef _TEST
 				stringstream tileInstMissInfo;

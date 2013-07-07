@@ -21,11 +21,22 @@ struct InstCfg
 	//	BOOLEAN_LOGIC,  // 布尔逻辑，需要计算布尔表达式以配置查找表的16个sram
 	//	SRAM_BIT        // 存储器型，以2进制数直接模拟阵列的存储情况
 	//};
+	enum Type {
+		Attribute,
+		Sram
+	};
+	InstCfg() : _type(Attribute) {}
+	// Attribute type
 	string  _attribute;
 	string  _instName;
 	string  _option;
+	// Sram type
+	string _sramName;
+	int    _sramVal;
+	
 	//bool isMap;
-	//InstCfg(CfgType t = KEY_VALUE) : type(t) {}
+
+	Type _type;
 };
 
 
