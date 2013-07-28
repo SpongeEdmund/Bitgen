@@ -21,12 +21,15 @@ namespace bitgen {
 	using boost::lexical_cast;
 	using std::make_pair;
 
-	string _COR_REG     = "00000012";
-	string _ID_CODE_REG = "0167c093";
-	string _MASK_REG    = "00000008";
-	string _CTL_REG     = "00000008";
-	string _FAR_REG     = "00280000";
-	string _CRC_REG     = "17af7ea6";
+	//string _COR_REG     = "0000_0012";
+	string _COR_REG     = "1000_0012";
+	
+	//string _ID_CODE_REG = "0167_c093";
+	string _ID_CODE_REG = "ffff_ffff";
+	string _MASK_REG    = "0000_0008";
+	string _CTL_REG     = "0000_0008";
+	string _FAR_REG     = "0028_0000";
+	string _CRC_REG     = "17af_7ea6";
 
 	void BitStream::init( bool initValue )
 	{
@@ -84,7 +87,8 @@ namespace bitgen {
 	{
 		int prevWord = idx / 32;
 		int offsetBit = idx % 32;
-		ResetBitOfWordBigEdian( _body[prevWord], offsetBit-1 );
+		//ResetBitOfWordLittleEdian( _body[prevWord], offsetBit-1 );
+		ResetBitOfWordLittleEdian(_body[prevWord],offsetBit);
 	}
 
 	void BitStream::resetBit( const SramBit & tilePos )
@@ -264,44 +268,49 @@ namespace bitgen {
 
 	void BitStream::printHead( std::ostream & os ) const
 	{
-		os << "00000000" << "\n"; 
-		os << "00000000" << "\n"; 
-		os << "00000000" << "\n"; 
-		os << "00000000" << "\n"; 
-		os << "aa995566" << "\n"; 
-		os << "30008001" << "\n"; 
-		os << "00000007" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "30012001" << "\n"; 
+		os << "0000_0000" << "\n"; 
+		os << "0000_0000" << "\n"; 
+		os << "0000_0000" << "\n"; 
+		os << "0000_0000" << "\n"; 
+		os << "aa99_5566" << "\n"; 
+		os << "3000_8001" << "\n"; 
+		os << "0000_0007" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "3001_2001" << "\n"; 
 		os << _COR_REG << "\n";
-		os << "30018001" << "\n";
+		os << "3001_8001" << "\n";
 		os << _ID_CODE_REG << "\n";
-		os << "30008001" << "\n";
-		os << "00000009" << "\n";
-		os << "20000000" << "\n";
-		os << "3000c001" << "\n";
+		os << "3000_8001" << "\n";
+		os << "0000_0009" << "\n";
+		os << "2000_0000" << "\n";
+		os << "3000_c001" << "\n";
 		os << _MASK_REG << "\n";
-		os << "3000a001" << "\n";
+		os << "3000_a001" << "\n";
 		os << _CTL_REG  << "\n";
-		os << "30002001" << "\n";
-		os << "00280000" << "\n";
-		os << "30008001" << "\n";
-		os << "00000001" << "\n";
-		os << "20000000" << "\n";
-		os << "20000000" << "\n";
-		os << "20000000" << "\n";
-		os << "20000000" << "\n";
-		os << "20000000" << "\n";
-		os << "30004000" << "\n";
-		os << "5003b568" << "\n";
+		os << "3000_2001" << "\n";
+		os << "0028_0000" << "\n";
+		os << "3000_8001" << "\n";
+		os << "0000_0001" << "\n";
+		os << "2000_0000" << "\n";
+		os << "2000_0000" << "\n";
+		os << "2000_0000" << "\n";
+		os << "2000_0000" << "\n";
+		os << "2000_0000" << "\n";
+		os << "3000_4000" << "\n";
+		//os << "5003b568" << "\n";
+		os << "5002_4090" << "\n";
 	}
 	
 	void BitStream::printBody( std::ostream & os ) const
 	{
 		std::vector<WORD>::const_iterator it = _body.begin();
 		while ( it != _body.end() ) {
-			os << std::hex << std::setw(8) << std::setfill('0') << *it << "\n"; 
+			stringstream hexStr;
+			
+			//os << std::hex << std::setw(8) << std::setfill('0') << *it << "\n"; 
+			hexStr << std::hex << std::setw(8) << std::setfill('0') << *it;
+			os << hexStr.str().substr(0,4) << "_" << hexStr.str().substr(4,8) << "\n";
 			++it;
 		}
 	}
@@ -309,39 +318,39 @@ namespace bitgen {
 	
 	void BitStream::printTail( std::ostream & os ) const
 	{
-		os << "30000001" << "\n";
-		os << "e1831749" << "\n";
-		os << "30008001" << "\n";
-		os << "0000000a" << "\n";
-		os << "20000000" << "\n";
-		os << "30008001" << "\n";
-		os << "00000003" << "\n";
-		os << "30008001" << "\n";
-		os << "0000000a" << "\n";
-		os << "30002001" << "\n";
+		os << "3000_0001" << "\n";
+		os << "e183_1749" << "\n";
+		os << "3000_8001" << "\n";
+		os << "0000_000a" << "\n";
+		os << "2000_0000" << "\n";
+		os << "3000_8001" << "\n";
+		os << "0000_0003" << "\n";
+		os << "3000_8001" << "\n";
+		os << "0000_000a" << "\n";
+		os << "3000_2001" << "\n";
 		os << _FAR_REG << "\n";
-		os << "30008001" << "\n";
-		os << "00000005" << "\n";
-		os << "3000c001" << "\n";
+		os << "3000_8001" << "\n";
+		os << "0000_0005" << "\n";
+		os << "3000_c001" << "\n";
 		os << _MASK_REG << "\n";
-		os << "3000a001" << "\n";
+		os << "3000_a001" << "\n";
 		os << _CTL_REG << "\n";
-		os << "30000001" << "\n";
+		os << "3000_0001" << "\n";
 		os << _CRC_REG << "\n";
-		os << "30008001" << "\n";
-		os << "0000000d" << "\n";
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << "\n"; 
-		os << "20000000" << endl;
+		os << "3000_8001" << "\n";
+		os << "0000_000d" << "\n";
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << "\n"; 
+		os << "2000_0000" << endl;
 	}
 
 	
@@ -352,8 +361,6 @@ namespace bitgen {
 		bitStream.printTail(os);
 		return os;
 	}
-
-
 
 	void SetBitOfWordBigEdian( WORD & word, int pos )
 	{
@@ -367,6 +374,14 @@ namespace bitgen {
 		WORD mask = 0x80000000;
 		mask >>= pos;
 		word &= ~mask;
+	}
+
+	void ResetBitOfWordLittleEdian(WORD& word, int pos)
+	{
+		WORD mask = 0x00000001;
+		mask <<= pos;
+		word &= ~mask;
+
 	}
 
 }

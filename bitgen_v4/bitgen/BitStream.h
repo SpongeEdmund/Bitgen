@@ -77,6 +77,7 @@ namespace bitgen {
 	
 	void SetBitOfWordBigEdian( WORD & word, int pos );
 	void ResetBitOfWordBigEdian( WORD & word, int pos );
+	void ResetBitOfWordLittleEdian( WORD& word, int pos);
 }
 
 #endif

@@ -29,11 +29,12 @@ using namespace boost::assign;
 	const unsigned FRAME_WORDS = 41;
 
 	std::set<std::string> CFG_CLUSTERS =
-		(list_of("SLICE"),"DSP48","FIFO16","RAMB16"
+		(list_of("SLICE"),"DSP48","FIFO16","RAMB16","DCM_ADV"
 		);
 
 	std::set<std::string> CFG_TILES = 
 		(list_of("CLB"), "INT", "INT_SO", "INT_SO_DCM0", "DSP", "BRAM",
+		"DCM_0","DCM_1",
 		"CLK_HROW_B", "CLK_HROW_T",
 		"CLK_BUFGCTRL_B", "CLK_BUFCTRL_T",
 		"CLK_IOB_B", "CLK_IOB_T",
