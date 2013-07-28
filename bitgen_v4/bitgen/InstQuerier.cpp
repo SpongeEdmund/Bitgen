@@ -442,7 +442,11 @@ namespace bitgen {
 
 			string addr = lexical_cast<string>(i);
 			sram* s = _cfgHir._curOption->find_sram_by_address(addr);
-
+			if (s == NULL) 
+			{
+				std::cout << "Warning: No SRAM configuration." << std::endl;
+				break;
+			}
 			string siteInstName = _cfgHir._curSiteInst->get_name();
 			string sramName = s->get_name();
 			_cfgHir._curDist = 
@@ -478,39 +482,43 @@ namespace bitgen {
 
 	}
 
-	void InstQuerier::recordBramSrams( SramVec & sramVec, string bramName, string bramStr )
+	void InstQuerier::recordBramSrams( SramVec & sramVec, string bramCellName, string bramInitBitStr )
 	{
 		Point tilePos = lexical_cast<Point>( _cfgHir._curTileInst->get_pos() );
 
-		string::size_type _pos = bramName.find_first_of('_');
-		string bramType = bramName.substr(0, _pos);
-		string bramHexAddrStr = bramName.substr( _pos + 1 );
-		toLower(bramHexAddrStr);
+		string::size_type _pos = bramCellName.find_first_of('_');
+		string bramCellType = bramCellName.substr(0, _pos);
+		string bramCellAddrHex = bramCellName.substr( _pos + 1 );
+		toLower(bramCellAddrHex);
 		
-		unsigned bramAddr = 0;
+		// Decimal bram cell address
+		int bramCellAddrDec = 0;
 		vector<int> addrBin;
-		Hex2BitVec(addrBin, bramHexAddrStr);
+		Hex2BitVec(addrBin, bramCellAddrHex);
 		// Transform the hex part of the BRAM attribute to decimal integer
-		bramAddr = BitVec2U(addrBin);
+		bramCellAddrDec = BitVec2U(addrBin);
 
 		vector<int> bramBin;
-		Hex2BitVec( bramBin, bramStr );
+		toLower(bramInitBitStr);
+		Hex2BitVec( bramBin, bramInitBitStr );
 		// std::reverse( bramBin.begin(), bramBin.end() );
 		assert( bramBin.size() == BRAM_LENGTH_PER_BLOCK );
 
 		// Find the current ram cell
-		_cfgHir._curBram = _cil.root()->get_bram_lib()->find_bram_by_type(bramType);
+		_cfgHir._curBram = _cil.root()->get_bram_lib()->find_bram_by_type(bramCellType);
 		
-		for( unsigned i = 0; i < bramBin.size(); i++ ) {
-			unsigned cellAddr;
-			if ( "INIT" == bramType ) {
+		for( int i = 0 ; i < bramBin.size() ; ++i ) {
+			int cellAddr;
+			int wlOffset = 0;
+			if ( "INIT" == bramCellType ) {
 				cellAddr = i;
+				wlOffset = bramCellAddrDec;
 			}
-			else if ( "INITP" == bramType ) {
+			else if ( "INITP" == bramCellType ) {
 				cellAddr = i % BRAM_PARITY_LENGTH;
 				// Change bram address of INITP
-				bramAddr = (bramAddr*BRAM_LENGTH_PER_BLOCK + i)/BRAM_PARITY_LENGTH;
-
+				wlOffset = (bramCellAddrDec*BRAM_LENGTH_PER_BLOCK + i)/BRAM_PARITY_LENGTH;
+				//std::cout << bramCellAddrDec << std::endl;
 			} else {
 				// Throw unexpected bram type error
 			}
@@ -519,8 +527,10 @@ namespace bitgen {
 			// Find the current ram cell
 			_cfgHir._curCell = _cfgHir._curBram->find_cell_by_address(cellAddrStr);
 			
-			int bitValue = bramBin[i];
-			int wl = lexical_cast<int>( _cfgHir._curBram->get_wl() ) + bramAddr;
+			int bitValue = bramBin[ bramBin.size()-1-i ];
+
+			int wl = lexical_cast<int>( _cfgHir._curBram->get_wl() ) + wlOffset;
+			//std::cout << wl << std::endl;
 			int bl = lexical_cast<int>( _cfgHir._curCell->get_bl() );
 
 				

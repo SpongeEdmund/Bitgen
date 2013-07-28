@@ -6,8 +6,9 @@ using std::vector;
 
 void Hex2BitVec( std::vector<int>& bin, const std::string& hexExp )
 {
+	std::cout << hexExp << std::endl;
 	string hex = hexExp;
-	toUpper(hex);
+	//toUpper(hex);
 	string::size_type px = hex.find_first_of('X');
 	if ( px != string::npos )
 		hex = hex.substr(px + 1); // delete the 0x prefix
@@ -21,9 +22,10 @@ void Hex2BitVec( std::vector<int>& bin, const std::string& hexExp )
 			dec = hex[i] - '0';
 		else if ( hex[i] >= 'a' && hex[i] <='f' )
 			dec = hex[i] - 'a' + 10;
-		else
+		else {
+			//std::cout << hex[i] << std::endl;
 			throw std::exception("Invalid hex expression");
-
+		}
 		unsigned char mask = 0x08;
 		for ( int j = 0; j < 4; ++j )
 		{
