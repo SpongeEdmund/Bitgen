@@ -140,8 +140,9 @@ namespace bitgen {
 						
 
 						SramBit newSram;
-						newSram.bitValue = lexical_cast<int>( _cfgHir._curSram->get_value() );
+						int bitValue = lexical_cast<int>( _cfgHir._curSram->get_value() );
 						newSram.tilePos  = lexical_cast<Point>( _cfgHir._curTileInst->get_pos() );
+						newSram.bitValue = ( _cfgHir._curDist->get_inv() == "yes" ) ? abs(bitValue - 1) : bitValue; 
 						newSram.offset   = lexical_cast<Point>( _cfgHir._curDist->get_offset() );
 						
 						int bl = lexical_cast<int>( _cfgHir._curDist->get_bl() );
