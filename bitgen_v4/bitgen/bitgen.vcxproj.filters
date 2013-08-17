@@ -125,6 +125,9 @@
     <ClInclude Include="fdp5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AdjustBiPipDir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -168,6 +171,9 @@
     </ClCompile>
     <ClCompile Include="CfgHierarchy.cpp">
       <Filter>Source Files\query</Filter>
+    </ClCompile>
+    <ClCompile Include="AdjustBiPipDir.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

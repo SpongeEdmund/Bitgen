@@ -212,13 +212,14 @@ Netlist* XdlNlHandler::parse( const string &file )
 				} else {
 					NetPip aPip;
 					// modified on 2013 3 12
-					sregex pipRegex = sregex::compile("(\\w+)\\s+(\\w+)\\s*[-=>]+\\s*(\\w+)");
+					sregex pipRegex = sregex::compile("(\\w+)\\s+(\\w+)\\s*([-=>])+\\s*(\\w+)");
 					smatch what;
 					bool mPipRegex = regex_match(netChildInfo, what, pipRegex);
 					assert( mPipRegex );
 					aPip.tileName = what[1];
 					aPip.srcNet   = what[2];
-					aPip.snkNet   = what[3];
+					aPip.dirType  = what[3];
+					aPip.snkNet   = what[4];
 					aNet.pips.push_back(aPip);
 
 					//cout << "pip " << what[1] << " " << what[2] << "->" << what[3] << endl;
