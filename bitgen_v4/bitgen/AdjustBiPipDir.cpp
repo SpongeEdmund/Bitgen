@@ -12,52 +12,53 @@ using std::ostringstream;
 
 DriveStatus JudgeDriveStatusInOneTile( const string& portName, const string& tileName, const NetlistNet& netToAdjust )
 {
-	if ( !isBiPort(portName) )
+	assert (portName=="LV0" || portName =="LV24" || portName =="LH0" || portName =="LH24");
+	//if ( !isBiport )
+	//{
+	//	NetPip relatedPip;
+	//	foreach( const NetPip& pip, netToAdjust.pips )
+	//	{
+	//		if( tileName == pip.tileName )
+	//		{
+	//			if( pip.snkNet == portName ) return isDriven;
+	//		}
+	//	}
+	//	return isDriver;
+	//}
+	//else
+	//{
+
+	foreach( const NetPip& pip, netToAdjust.pips )
 	{
-		NetPip relatedPip;
-		foreach( const NetPip& pip, netToAdjust.pips )
+		if( tileName == pip.tileName )
 		{
-			if( tileName == pip.tileName )
-			{
-				if( pip.srcNet == portName ) return isSink;
-				if( pip.snkNet == portName ) return isSource;
+			if( !isBiPip(pip) && portName == pip.snkNet ) {
+				return isDriver;
 			}
 		}
-		return isUnknown;
 	}
-	else
+	foreach( const NetPip& pip, netToAdjust.pips )
 	{
-		foreach( const NetPip& pip, netToAdjust.pips )
+		if( tileName == pip.tileName )
 		{
-			if( tileName == pip.tileName )
-			{
-				if( !isBiPip(pip) && portName == pip.snkNet ) {
-					return isSource;
-				}
-			}
-		}
-		foreach( const NetPip& pip, netToAdjust.pips )
-		{
-			if( tileName == pip.tileName )
-			{
-				if( isBiPip(pip) && (portName == pip.snkNet || portName == pip.srcNet) ) {
-					string otherPortName = (portName == pip.snkNet) ? pip.srcNet : pip.snkNet;
-					foreach( const NetPip& pip, netToAdjust.pips )
+			if( isBiPip(pip) && (portName == pip.snkNet || portName == pip.srcNet) ) {
+				string otherPortName = (portName == pip.snkNet) ? pip.srcNet : pip.snkNet;
+				foreach( const NetPip& pip, netToAdjust.pips )
+				{
+					if( tileName == pip.tileName )
 					{
-						if( tileName == pip.tileName )
-						{
-							if( !isBiPip(pip) && otherPortName == pip.snkNet ) {
-								return isSource;
-							}
+						if( !isBiPip(pip) && otherPortName == pip.snkNet ) {
+							return isDriven;
 						}
 					}
-					return isUnknown;
 				}
+				//return isUnknown;
 			}
 		}
-
-		return isSink;
 	}
+
+	return isUnknown;
+	//}
 }
 
 //DriveStatus JudgeDriveStatus( const string& portName, const string& tileName, const NetlistNet& netToAdjust )
@@ -69,12 +70,12 @@ DriveStatus JudgeDriveStatusInOneTile( const string& portName, const string& til
 //		string endTilePort;
 //		string endTileName;
 //		GetConnPortOfEndTile( endTilePort, endTileName, portName, tileName, netToAdjust );
-//		//if ( endTilePort == "" ) return isSource;
+//		//if ( endTilePort == "" ) return isDriven;
 //		if ( endTilePort != "")
 //		DriveStatus driveStatusInEndTile = JudgeDriveStatusInOneTile( endTilePort, endTileName, netToAdjust );
 //		switch( JudgeDriveStatusGlobal(endTilePort, endTileName, netToAdjust) ) {
-//			case isSink : return isSource; break;
-//			case isSource : return isSink; break;
+//			case isDriver : return isDriven; break;
+//			case isDriven : return isDriver; break;
 //			case isUnknown: return isUnknown; break;
 //			default: break;
 //
@@ -101,15 +102,20 @@ DriveStatus JudgeDriveStatus( const string& portName, const string& tileName, co
 		}
 		if ( terminalPort.portName != "" ) {			
 			DriveStatus driveStatusInEndTile = JudgeDriveStatusInOneTile( terminalPort.portName, terminalPort.tileName, netToAdjust );
-			switch( driveStatusInEndTile ) {
-				case isSink : return isSource; break;
-				case isSource : return isSink; break;
+			/*switch( driveStatusInEndTile ) {
+				case isDriver : return isDriven; break;
+				case isDriven : return isDriver; break;
 				case isUnknown: return isUnknown; break;
 				default: break;
+			}*/
+			if( driveStatusInEndTile == isDriver ) {
+				return isDriver;
+			} else {
+				return isUnknown;
 			}
 		}
 		else {
-			return isSource;
+			return isDriven;
 		}
 	}
 	return driveStatusInStartTile;
@@ -117,10 +123,11 @@ DriveStatus JudgeDriveStatus( const string& portName, const string& tileName, co
 
 
 
-void GetConnPortsOfEndTile( /*string& endTilePort, string&*/vector<TilePort>& connPorts, const string& startTilePort, const string& startTileName, const NetlistNet& netToAdjust )
+void GetConnPortsOfEndTile(vector<TilePort>& connPorts, const string& startTilePort, const string& startTileName, const NetlistNet& netToAdjust )
 {
 	int x, y;
 	char dir = startTilePort[1];
+	
 	sscanf_s( startTileName.c_str(), "INT_X%dY%d", &x, &y );
 	for( int i = 0 ; i < 4; ++i ) {
 
@@ -131,19 +138,20 @@ void GetConnPortsOfEndTile( /*string& endTilePort, string&*/vector<TilePort>& co
 			x = x + 6;
 		}
 		if ( startTilePort == "LV0" ) {
-			y = y + 6;
-		}
-		if ( startTilePort == "LV24") {
 			y = y - 6;
 		}
-		if (x < 0 || y < 0) break;
+		if ( startTilePort == "LV24") {
+			y = y + 6;
+		}
+		//if (x < 0 || y < 0) break;
 		ostringstream oss;
 		oss << "INT_X" << x << "Y" << y;
 		string curTileName = oss.str();
 		foreach ( const NetPip& pip, netToAdjust.pips ) {
 			if ( pip.tileName == curTileName ) {
 				ostringstream oss;
-				oss << 'L' << dir << (dir == 'H') ? x : y;
+				int d = (startTilePort=="LH0"||startTilePort=="LV0") ? (6*i+6): (18-6*i);
+				oss << 'L' << dir << d;
 				string longLinePort = oss.str();
 				if ( pip.srcNet == longLinePort || pip.snkNet == longLinePort ) {
 					TilePort aPort;
@@ -167,11 +175,11 @@ bool TryAdjustBiPipDir( NetPip& pipToAdjust, NetlistNet& netToAdjust )
 
 	DriveStatus leftPortDriveStatus = JudgeDriveStatus( leftPort, pipToAdjust.tileName, netToAdjust );
 	DriveStatus rightPortDriveStatus = JudgeDriveStatus( rightPort, pipToAdjust.tileName, netToAdjust);
-	if ( leftPortDriveStatus == isSink ) {
+	if ( leftPortDriveStatus == isDriver || rightPortDriveStatus == isDriven ) {
 		pipToAdjust.dirType = "->";
 		return true;
 	}
-	else if ( rightPortDriveStatus == isSink ) {
+	else if ( rightPortDriveStatus == isDriver || leftPortDriveStatus == isDriven ) {
 		pipToAdjust.dirType = "->";
 		string temp;
 		temp = pipToAdjust.srcNet;
@@ -186,13 +194,14 @@ bool TryAdjustBiPipDir( NetPip& pipToAdjust, NetlistNet& netToAdjust )
 }
 
 bool isBiPort( const string & portName )
-{
-	return (
-		portName == "LH24" ||
-		portName == "LH0"  ||
-		portName == "LV24" ||
-		portName == "LV0"
-		);
+{ 
+		if( portName == "LH24" ||
+		    portName == "LH0"  ||
+		    portName == "LV24" ||
+		    portName == "LV0")
+			return true;
+		else
+			return false;
 }
 
 bool isBiPip( const NetPip& pip )

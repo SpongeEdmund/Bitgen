@@ -11,8 +11,8 @@ const int MAXY = 100;
 
 using std::string;
 using std::vector;
-// DriveStatus是相对于外部线网而言的
-enum DriveStatus { isSource, isSink, isUnknown };
+// DriveStatus是指端口在pip中的角色
+enum DriveStatus { isDriven, isDriver, isUnknown };
 
 
 //

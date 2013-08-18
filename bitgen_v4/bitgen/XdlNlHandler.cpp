@@ -1,4 +1,5 @@
 #include "XdlNlHandler.h"
+#include "AdjustBiPipDir.h"
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -212,7 +213,7 @@ Netlist* XdlNlHandler::parse( const string &file )
 				} else {
 					NetPip aPip;
 					// modified on 2013 3 12
-					sregex pipRegex = sregex::compile("(\\w+)\\s+(\\w+)\\s*([-=>])+\\s*(\\w+)");
+					sregex pipRegex = sregex::compile("(\\w+)\\s+(\\w+)\\s*([-=>]+)\\s*(\\w+)");
 					smatch what;
 					bool mPipRegex = regex_match(netChildInfo, what, pipRegex);
 					assert( mPipRegex );
@@ -226,6 +227,7 @@ Netlist* XdlNlHandler::parse( const string &file )
 				}
 				++pos;
 			} // end of net info parsing
+			AdjustNet(aNet);
 			_netlist->nets.push_back(aNet);
 		} else {
 			// Throw unknown type of netlist
