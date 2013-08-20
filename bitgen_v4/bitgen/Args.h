@@ -7,6 +7,7 @@ namespace bitgen {
 
 	struct Args {
 		//! Parse the command line of bitgen
+		Args() : ISENCRYPTED(false) {}
 		void parse( int argc, char* argv[] );
 
 		//! Arguments of bitgen app
@@ -15,6 +16,7 @@ namespace bitgen {
 		std::string CIL;       //!< configuration info library
 		std::string NETLIST;   //!< netlist file *.xml or *.xdl
 		std::string BITSTREAM; //!< bitstream file *.bit
+		bool        ISENCRYPTED; //!< use encrypted cil file or not
 	};
 
 

@@ -68,7 +68,7 @@ namespace bitgen
 		//! Run the whole query process.
 		void run( );
 		//! Load in cil
-		void loadCil(const std::string & );
+		void loadCil(const std::string &cilFile , bool isEncrypted);
 		//! Load in circuit 
 		void loadNetlist(const std::string & );		
 		//! Generate bitstream

@@ -11,11 +11,11 @@ namespace bitgen {
 	using std::endl;
 	using std::ofstream;
 	using boost::lexical_cast;
-	void BitGenApp::loadCil(const string & cilFile) 
+	void BitGenApp::loadCil(const string & cilFile, bool isEncrypted ) 
 	{
 		std::cout << ">>| Loading cil file " << cilFile << std::endl;
 		if( _cil ) delete _cil;
-		_cil = new Cil( cilFile );
+		_cil = new Cil( cilFile, isEncrypted );
 	}
 
 	void BitGenApp::loadNetlist(const string & netlistFile )
@@ -75,7 +75,7 @@ namespace bitgen {
 	{
 
 
-		loadCil( ARGS.CIL );
+		loadCil( ARGS.CIL, ARGS.ISENCRYPTED );
 		
 //#ifdef _TEST
 		double _loadCilTime = static_cast<double>( clock() );

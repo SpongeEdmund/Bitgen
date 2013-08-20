@@ -12,7 +12,7 @@ class Cil
 {
 
 public:
-	explicit Cil( const std::string & cilFile );;
+	explicit Cil( const std::string & cilFile, bool isEncrypted = false );
 	~Cil();
 
 	cil* root() const { return static_cast<cil*>( _doc->first_node() ); }

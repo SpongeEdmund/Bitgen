@@ -128,6 +128,9 @@
     <ClInclude Include="AdjustBiPipDir.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="zfstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

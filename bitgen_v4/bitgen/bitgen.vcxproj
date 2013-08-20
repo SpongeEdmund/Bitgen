@@ -206,6 +206,7 @@
     <ClInclude Include="utils.h" />
     <ClInclude Include="XdlNLHandler.h" />
     <ClInclude Include="XmlModUtils.h" />
+    <ClInclude Include="zfstream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdjustBiPipDir.cpp" />

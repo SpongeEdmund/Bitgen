@@ -39,6 +39,7 @@ namespace bitgen {
 			("bitstream,b", po::value<string>(), "bitstream file")
 			("help,h",                           "show help information")
 			("version,v",                        "show version information")
+			("encrypted,e",                        "use encrypted cil file")
 			;
 		po::variables_map vm;
 		po::options_description cmdline;
@@ -75,6 +76,10 @@ namespace bitgen {
 
 		if (vm.count("bitstream")) {
 			BITSTREAM = vm["bitstream"].as<string>();
+		}
+
+		if (vm.count("encrypted")) {
+			ISENCRYPTED = true;
 		}
 	}
 
