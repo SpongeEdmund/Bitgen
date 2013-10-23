@@ -22,7 +22,7 @@ namespace bitgen {
 	using std::make_pair;
 
 	//string _COR_REG     = "0000_0012";
-	string _COR_REG     = "1000_0012";
+	string _COR_REG     = "1001_2012";
 	
 	//string _ID_CODE_REG = "0167_c093";
 	string _ID_CODE_REG = "ffff_ffff";
