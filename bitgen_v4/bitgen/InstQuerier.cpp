@@ -47,9 +47,8 @@ namespace bitgen {
 			string tileInstName       = inst._placedTile;
 
 			// find current tile inst
-			// _cfgHir._curTileInst = _cfgHir._curArch->find_tile_inst_by_name( tileInstName );
 			_cfgHir._curTileInst = _nameTileMap[tileInstName];
-			//assert( _cfgHir._curTileInst != 0 );
+
 #ifdef _TEST
 			stringstream tileInstMissInfo;
 			tileInstMissInfo << "[!Error!] Cannot find tile instance: " << tileInstName;
@@ -212,8 +211,8 @@ namespace bitgen {
 				if ( instCfg._type == InstCfg::Attribute ) {
 					string attrName = instCfg._attribute;
 					string optionName = instCfg._option;
-					//Ignore option #OFF
-					if ( "#OFF" == optionName || "" == optionName ) continue;
+					
+					if ( "" == optionName ) continue;
 	#ifdef _TEST
 					std::cout << "<DebugInfo>  Querying for " << attrName << "::" << optionName << "..." << std::endl;
 	#endif
