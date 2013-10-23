@@ -148,6 +148,21 @@ Netlist* XdlNlHandler::parse( const string &file )
 					}
 
 					aInst._cfgs.push_back(aInstCfg);
+					
+					// 如果SLICEL的类型place在SLICEM中
+					if (aInst._siteDef == "SLICEL") {
+						int x, y;
+						sscanf_s(aInst._placedTile.c_str(), "SLICE_X%dY%d", x, y);
+						// x都是偶数的SLICE便是SLICEM
+						if (x % 2 == 0) {
+							// 如果SLICEL用到了SRINV，则添加SRFFMUX::0的属性
+							if (aInstCfg._attribute == "SRINV" && aInstCfg._option != "#OFF") {
+								aInstCfg._attribute = "SRFFMUX";
+								aInstCfg._option = "0";
+								aInst._cfgs.push_back(aInstCfg);
+							}
+						}
+					}
 				}
 				// cfg段中以sramName = sramValue的形式来补充用xilinx无法覆盖的配置描述
 				else if ( regex_match( aInstCfgInfo, what, instCfgRegex2 ) )
@@ -162,12 +177,10 @@ Netlist* XdlNlHandler::parse( const string &file )
 				//cout << "Cfg attribute " << aInstCfg.attribute;
 				//cout << " inst name " << aInstCfg.instName;
 				//cout << " option " << aInstCfg.option << endl;
-
-				
 				++pos;
 			}
 			_netlist->insts.push_back(aInst);
-			
+
 		} else if ( objName == "net") {
 			
 			NetlistNet aNet;
