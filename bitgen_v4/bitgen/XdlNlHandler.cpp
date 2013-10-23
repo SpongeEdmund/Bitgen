@@ -152,7 +152,7 @@ Netlist* XdlNlHandler::parse( const string &file )
 					// 如果SLICEL的类型place在SLICEM中
 					if (aInst._siteDef == "SLICEL") {
 						int x, y;
-						sscanf_s(aInst._placedTile.c_str(), "SLICE_X%dY%d", x, y);
+						sscanf_s(aInst._placedSite.c_str(), "SLICE_X%dY%d", &x, &y);
 						// x都是偶数的SLICE便是SLICEM
 						if (x % 2 == 0) {
 							// 如果SLICEL用到了SRINV，则添加SRFFMUX::0的属性
